@@ -53,42 +53,32 @@
     </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <p>#前言</p>
-<p>不知道什么时候看到的一个基于三星手机和乐高积木的解魔方机器人获得世界记录的视频，自从那之后，自己做一个解魔方机器人的想法一直徘徊在脑海中挥之不去，直到现在，终于有机会来亲手把想法“变现”了，说实话，一直很少有这种把想法实现的经历，可能是自己比较看重这一点吧，所以这个魔方机器人对我来说另一层意义便是锻炼自己把想法实现的能力。</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>不知道什么时候看到的一个基于三星手机和乐高积木的解魔方机器人获得世界记录的视频，自从那之后，自己做一个解魔方机器人的想法一直徘徊在脑海中挥之不去，直到现在，终于有机会来亲手把想法“变现”了，说实话，一直很少有这种把想法实现的经历，可能是自己比较看重这一点吧，所以这个魔方机器人对我来说另一层意义便是锻炼自己把想法实现的能力。</p>
 <hr>
-<p>#整体结构<br>整体上分为三部分，android手机作为上位机，arduino作为下位机，还有机械部分。</p>
-<p>##android上位机</p>
-<p>android上位机负责利用手机获取魔方状态，并计算出还原序列，将还原序列发送给下位机。</p>
+<h1 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h1><p>整体上分为三部分，android手机作为上位机，arduino作为下位机，还有机械部分。</p>
+<h2 id="android上位机"><a href="#android上位机" class="headerlink" title="android上位机"></a>android上位机</h2><p>android上位机负责利用手机获取魔方状态，并计算出还原序列，将还原序列发送给下位机。</p>
 <blockquote>
 <p>本来想只是用arduino作为主控的，但是发现arduino计算性能太差，从经济的角度出发，便选择了arduino+android的方案</p>
 </blockquote>
-<p>##arduino下位机</p>
-<p>arduino下位机收到还原序列后控制机械部分还原魔方</p>
+<h2 id="arduino下位机"><a href="#arduino下位机" class="headerlink" title="arduino下位机"></a>arduino下位机</h2><p>arduino下位机收到还原序列后控制机械部分还原魔方</p>
 <p>目前打算使用UNO R3</p>
-<p>##机械部分</p>
-<p>机械部分分为两个部分，动力部分和材料选择</p>
-<p>###动力部分</p>
-<p>拟使用四步进电机二舵机的方案，综合速度与容错性</p>
+<h2 id="机械部分"><a href="#机械部分" class="headerlink" title="机械部分"></a>机械部分</h2><p>机械部分分为两个部分，动力部分和材料选择</p>
+<h3 id="动力部分"><a href="#动力部分" class="headerlink" title="动力部分"></a>动力部分</h3><p>拟使用四步进电机二舵机的方案，综合速度与容错性</p>
 <blockquote>
 <p>用四舵机带动机械臂的方案由于舵机转动角度限制速度上略显疲软，六步进电机带动机械臂的方案由于要破坏中心块，由于个人不喜欢，也放弃</p>
 </blockquote>
-<p>###材料选择</p>
-<p>首选方案：乐高积木<del>某宝上一两百一斤的那种兼容积木</del></p>
+<h3 id="材料选择"><a href="#材料选择" class="headerlink" title="材料选择"></a>材料选择</h3><p>首选方案：乐高积木 <del>某宝上一两百一斤的那种兼容积木</del></p>
 <p>备选方案：塑料条，角铝+亚克力切割</p>
 <hr>
-<p>#进度安排</p>
-<p>会因实际情况随时调整</p>
-<p>##第一阶段</p>
-<p>编写android端解魔方app，实现功能：通过摄像头获取魔方状态，计算出还原序列</p>
-<p>##第二阶段</p>
-<ul>
+<h1 id="进度安排"><a href="#进度安排" class="headerlink" title="进度安排"></a>进度安排</h1><p>会因实际情况随时调整</p>
+<h2 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h2><p>编写android端解魔方app，实现功能：通过摄像头获取魔方状态，计算出还原序列</p>
+<h2 id="第二阶段"><a href="#第二阶段" class="headerlink" title="第二阶段"></a>第二阶段</h2><ul>
 <li>android与arduino通讯</li>
 <li>搭建电路</li>
 <li>arduino控制电机</li>
 <li>操作序列和步骤序列转换</li>
 </ul>
-<p>##第三阶段</p>
-<p>搭建机械部分</p>
+<h2 id="第三阶段"><a href="#第三阶段" class="headerlink" title="第三阶段"></a>第三阶段</h2><p>搭建机械部分</p>
 
       
 
