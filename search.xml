@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+    
+    <entry>
+      <title><![CDATA[解魔方机器人第一阶段]]></title>
+      <url>http://yoursite.com/2017/02/02/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5/</url>
+      <content type="html"><![CDATA[<p>今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。</p>
+<p>之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h1><p>首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。</p>
+<blockquote>
+<p>本来想用从画面中检测矩形的方法获取魔方颜色的，但是之前发现检测矩形并不稳定，而且android上安装opencv好像并不轻松，最后从实际角度考虑采用了稳妥的从九个点采颜色的方案。</p>
+</blockquote>
+<p>将魔方54个小块的颜色都采完之后，将颜色分类，并魔方状态转化为<code>UBL...</code>格式的字符串，U代表当前块的颜色为U面的颜色。</p>
+<p>颜色分类的思想是将HSV值排序，按照一定特征分离颜色，具体步骤如下：</p>
+<ol>
+<li>按照S值升序排列，最小的9个值为白色块。</li>
+<li>剩下的值，按照H值升序排列，从大到小分别为红，蓝，绿，黄，橙。</li>
+</ol>
+<blockquote>
+<p>注意：在我测试的环境中，红色H值的区间大部分为350以上，少部分有10以下的，如果350以上的值不足9个的话，要从最小的值中补齐。<br>我的方法是将H值最小的9个元素复制到H值最大的元素后面，每次找到颜色开始的索引，向后取9个就是相同的9个颜色小块。</p>
+</blockquote>
+<p>最后利用上一步得到的魔方状态字符串绘制魔方（只会绘制展开图），并将字符串传给计算还原步骤的程序，这里我直接用的github上现成的程序，来源<a href="https://github.com/cs0x7f/min2phase" target="_blank" rel="external">cs0x7f/min2phase</a>。</p>
+<p>这个程序不光能以较少步数解出魔方，还能对不合法的状态进行判断，在这里对作者深表感谢。</p>
+<hr>
+<h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><ul>
+<li>carmera类默认方向是横向，需要自行调整.</li>
+<li>carmera预览尺寸和照片尺寸不一样。</li>
+<li>SurfaceView尺寸如果不设定会自行拉伸，可能会导致预览画面的采样点和实际帧上坐标误差。</li>
+<li>为了保证采样点坐标准确，我选择在预览帧里面采颜色的HSV值。</li>
+<li>如果遇到了诡异的问题，记得Build-Rebuild Poject。</li>
+<li>Color类中hsv的区间分别为[0, 360), [0, 1], [0, 1], 而opencv中区间为[0, 180), [0, 255], [0, 255], 为了提高精度建议把sv值乘以255。</li>
+<li>调用解魔方的代码时，记得检查表示魔方状态字符串的格式，主要是中心块的顺序。</li>
+</ul>
+<hr>
+<h1 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h1><ul>
+<li>改进UI</li>
+<li>改进代码及文件结构</li>
+<li>研究一下解魔方的2phase算法</li>
+<li>绘制3D魔方</li>
+</ul>
+<hr>
+<p>未完待续……</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[解魔方机器人总体设计]]></title>
+      <url>http://yoursite.com/2017/02/02/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1/</url>
+      <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>不知道什么时候看到的一个基于三星手机和乐高积木的解魔方机器人获得世界记录的视频，自从那之后，自己做一个解魔方机器人的想法一直徘徊在脑海中挥之不去，直到现在，终于有机会来亲手把想法“变现”了，说实话，一直很少有这种把想法实现的经历，可能是自己比较看重这一点吧，所以这个魔方机器人对我来说另一层意义便是锻炼自己把想法实现的能力。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h1><p>整体上分为三部分，android手机作为上位机，arduino作为下位机，还有机械部分。</p>
+<h2 id="android上位机"><a href="#android上位机" class="headerlink" title="android上位机"></a>android上位机</h2><p>android上位机负责利用手机获取魔方状态，并计算出还原序列，将还原序列发送给下位机。</p>
+<blockquote>
+<p>本来想只是用arduino作为主控的，但是发现arduino计算性能太差，从经济的角度出发，便选择了arduino+android的方案</p>
+</blockquote>
+<h2 id="arduino下位机"><a href="#arduino下位机" class="headerlink" title="arduino下位机"></a>arduino下位机</h2><p>arduino下位机收到还原序列后控制机械部分还原魔方</p>
+<p>目前打算使用UNO R3</p>
+<h2 id="机械部分"><a href="#机械部分" class="headerlink" title="机械部分"></a>机械部分</h2><p>机械部分分为两个部分，动力部分和材料选择</p>
+<h3 id="动力部分"><a href="#动力部分" class="headerlink" title="动力部分"></a>动力部分</h3><p>拟使用四步进电机二舵机的方案，综合速度与容错性</p>
+<blockquote>
+<p>用四舵机带动机械臂的方案由于舵机转动角度限制速度上略显疲软，六步进电机带动机械臂的方案由于要破坏中心块，由于个人不喜欢，也放弃</p>
+</blockquote>
+<h3 id="材料选择"><a href="#材料选择" class="headerlink" title="材料选择"></a>材料选择</h3><p>首选方案：乐高积木 <del>某宝上一两百一斤的那种兼容积木</del></p>
+<p>备选方案：塑料条，角铝+亚克力切割</p>
+<hr>
+<h1 id="进度安排"><a href="#进度安排" class="headerlink" title="进度安排"></a>进度安排</h1><p>会因实际情况随时调整</p>
+<h2 id="第一阶段"><a href="#第一阶段" class="headerlink" title="第一阶段"></a>第一阶段</h2><p>编写android端解魔方app，实现功能：通过摄像头获取魔方状态，计算出还原序列</p>
+<h2 id="第二阶段"><a href="#第二阶段" class="headerlink" title="第二阶段"></a>第二阶段</h2><ul>
+<li>android与arduino通讯</li>
+<li>搭建电路</li>
+<li>arduino控制电机</li>
+<li>操作序列和步骤序列转换</li>
+</ul>
+<h2 id="第三阶段"><a href="#第三阶段" class="headerlink" title="第三阶段"></a>第三阶段</h2><p>搭建机械部分</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[新的开始]]></title>
+      <url>http://yoursite.com/2017/02/01/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B/</url>
+      <content type="html"><![CDATA[<p>2017，重新起航</p>
+]]></content>
+    </entry>
+    
+  
+  
+</search>
