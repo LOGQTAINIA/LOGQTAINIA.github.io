@@ -8,9 +8,9 @@
   <meta name="description" content="今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。
 之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。
 
-整体设计
-问题记录
-未完待续……">
+整体设计首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。
+
+本来想用从画面中检">
 <meta property="og:type" content="article">
 <meta property="og:title" content="解魔方机器人第一阶段">
 <meta property="og:url" content="http://yoursite.com/2017/02/02/解魔方机器人第一阶段/index.html">
@@ -18,18 +18,18 @@
 <meta property="og:description" content="今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。
 之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。
 
-整体设计
-问题记录
-未完待续……">
-<meta property="og:updated_time" content="2017-02-02T15:07:28.182Z">
+整体设计首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。
+
+本来想用从画面中检">
+<meta property="og:updated_time" content="2017-02-03T08:35:50.534Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解魔方机器人第一阶段">
 <meta name="twitter:description" content="今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。
 之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。
 
-整体设计
-问题记录
-未完待续……">
+整体设计首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。
+
+本来想用从画面中检">
   
     <link rel="alternative" href="/atom.xml" title="LOGQTAINIA&#39;S Blog" type="application/atom+xml">
   
@@ -70,8 +70,39 @@
         <p>今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。</p>
 <p>之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。</p>
 <hr>
-<h1 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h1><hr>
-<h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><hr>
+<h1 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h1><p>首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。</p>
+<blockquote>
+<p>本来想用从画面中检测矩形的方法获取魔方颜色的，但是之前发现检测矩形并不稳定，而且android上安装opencv好像并不轻松，最后从实际角度考虑采用了稳妥的从九个点采颜色的方案。</p>
+</blockquote>
+<p>将魔方54个小块的颜色都采完之后，将颜色分类，并魔方状态转化为<code>UBL...</code>格式的字符串，U代表当前块的颜色为U面的颜色。</p>
+<p>颜色分类的思想是将HSV值排序，按照一定特征分离颜色，具体步骤如下：</p>
+<ol>
+<li>按照S值升序排列，最小的9个值为白色块。</li>
+<li>剩下的值，按照H值升序排列，从大到小分别为红，蓝，绿，黄，橙。</li>
+</ol>
+<blockquote>
+<p>注意：在我测试的环境中，红色H值的区间大部分为350以上，少部分有10以下的，如果350以上的值不足9个的话，要从最小的值中补齐。<br>我的方法是将H值最小的9个元素复制到H值最大的元素后面，每次找到颜色开始的索引，向后取9个就是相同的9个颜色小块。</p>
+</blockquote>
+<p>最后利用上一步得到的魔方状态字符串绘制魔方（只会绘制展开图），并将字符串传给计算还原步骤的程序，这里我直接用的github上现成的程序，来源<a href="https://github.com/cs0x7f/min2phase" target="_blank" rel="external">cs0x7f/min2phase</a>。</p>
+<p>这个程序不光能以较少步数解出魔方，还能对不合法的状态进行判断，在这里对作者深表感谢。</p>
+<hr>
+<h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><ul>
+<li>carmera类默认方向是横向，需要自行调整.</li>
+<li>carmera预览尺寸和照片尺寸不一样。</li>
+<li>SurfaceView尺寸如果不设定会自行拉伸，可能会导致预览画面的采样点和实际帧上坐标误差。</li>
+<li>为了保证采样点坐标准确，我选择在预览帧里面采颜色的HSV值。</li>
+<li>如果遇到了诡异的问题，记得Build-Rebuild Poject。</li>
+<li>Color类中hsv的区间分别为[0, 360), [0, 1], [0, 1], 而opencv中区间为[0, 180), [0, 255], [0, 255], 为了提高精度建议把sv值乘以255。</li>
+<li>调用解魔方的代码时，记得检查表示魔方状态字符串的格式，主要是中心块的顺序。</li>
+</ul>
+<hr>
+<h1 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h1><ul>
+<li>改进UI</li>
+<li>改进代码及文件结构</li>
+<li>研究一下解魔方的2phase算法</li>
+<li>绘制3D魔方</li>
+</ul>
+<hr>
 <p>未完待续……</p>
 
       
