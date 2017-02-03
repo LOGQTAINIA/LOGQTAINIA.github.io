@@ -21,7 +21,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="LOGQTAINIA's Blog">
+  <link rel="alternate" href="/atom.xml" title="LOGQTAINIA">
 
 
 
@@ -38,10 +38,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="解魔方机器人第一阶段">
 <meta property="og:url" content="http://yoursite.com/2017/02/02/解魔方机器人第一阶段/index.html">
-<meta property="og:site_name" content="LOGQTAINIA's Blog">
+<meta property="og:site_name" content="LOGQTAINIA">
 <meta property="og:description" content="今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。
 之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。">
-<meta property="og:updated_time" content="2017-02-03T12:14:08.112Z">
+<meta property="og:updated_time" content="2017-02-03T12:19:18.849Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解魔方机器人第一阶段">
 <meta name="twitter:description" content="今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。
@@ -61,13 +61,13 @@
 
 
 
-    <title> 解魔方机器人第一阶段 · LOGQTAINIA's Blog </title>
+    <title> 解魔方机器人第一阶段 · LOGQTAINIA </title>
   </head>
 
   <body>
     <div class="container">
       <header id="header" class="header"><div class="logo-wrapper">
-  <a href="/." class="logo">LOGQTAINIA's Blog</a>
+  <a href="/." class="logo">LOGQTAINIA</a>
 </div>
 
 <nav class="site-nav">
@@ -109,7 +109,7 @@
 <div class="mobile-navbar">
   <div class="mobile-header">
     <div class="mobile-header-logo">
-      <a href="/." class="logo">LOGQTAINIA's Blog</a>
+      <a href="/." class="logo">LOGQTAINIA</a>
     </div>
 
     <div class="mobile-header-icon">
@@ -169,7 +169,7 @@
       <div class="post-toc" id="post-toc">
         <h2 class="post-toc-title">Contents</h2>
         <div class="post-toc-content">
-          <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#整体设计"><span class="toc-text">整体设计</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#问题记录"><span class="toc-text">问题记录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后续计划"><span class="toc-text">后续计划</span></a>
+          <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#整体设计"><span class="toc-text">整体设计</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#问题记录"><span class="toc-text">问题记录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#后续计划"><span class="toc-text">后续计划</span></a></li></ol>
         </div>
       </div>
     
@@ -178,7 +178,9 @@
       
         <p>今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。</p>
 <p>之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h1><p>首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。</p>
+<a id="more"></a>
+<hr>
+<h1 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h1><p>首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。</p>
 <blockquote>
 <p>本来想用从画面中检测矩形的方法获取魔方颜色的，但是之前发现检测矩形并不稳定，而且android上安装opencv好像并不轻松，最后从实际角度考虑采用了稳妥的从九个点采颜色的方案。</p>
 </blockquote>
