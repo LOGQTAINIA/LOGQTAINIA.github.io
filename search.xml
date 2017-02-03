@@ -51,9 +51,7 @@
       <title><![CDATA[解魔方机器人总体设计]]></title>
       <url>http://yoursite.com/2017/02/02/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1/</url>
       <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>不知道什么时候看到的一个基于三星手机和乐高积木的解魔方机器人获得世界记录的视频，自从那之后，自己做一个解魔方机器人的想法一直徘徊在脑海中挥之不去，直到现在，终于有机会来亲手把想法“变现”了，说实话，一直很少有这种把想法实现的经历，可能是自己比较看重这一点吧，所以这个魔方机器人对我来说另一层意义便是锻炼自己把想法实现的能力。</p>
-<a id="more"></a>
-<hr>
-<h1 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h1><p>整体上分为三部分，android手机作为上位机，arduino作为下位机，还有机械部分。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h1><p>整体上分为三部分，android手机作为上位机，arduino作为下位机，还有机械部分。</p>
 <h2 id="android上位机"><a href="#android上位机" class="headerlink" title="android上位机"></a>android上位机</h2><p>android上位机负责利用手机获取魔方状态，并计算出还原序列，将还原序列发送给下位机。</p>
 <blockquote>
 <p>本来想只是用arduino作为主控的，但是发现arduino计算性能太差，从经济的角度出发，便选择了arduino+android的方案</p>
