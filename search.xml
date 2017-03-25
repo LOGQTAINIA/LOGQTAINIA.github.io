@@ -4,6 +4,24 @@
   
     
     <entry>
+      <title><![CDATA[树莓派安装系统]]></title>
+      <url>http://yoursite.com/2017/03/25/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F/</url>
+      <content type="html"><![CDATA[<p>本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。</p>
+<p>总述一下准备过程，去官网下载NOOBS，解压后将文件放到格式化后的SD卡中即可，剩下的就把卡插到树莓派中，通电，树莓派会自动进入安装界面。</p>
+<p>接下来说明一下在Ubuntu下面通过CLI格式SD卡的步骤。</p>
+<p>这里使用<code>mkdosfs</code>（make-dos-files-system）命令来格式SD卡，文件格式为FAT32。格式SD卡前先需要查出SD卡的设备名称。</p>
+<blockquote>
+<p>首先在未插入SD卡时使用<code>df</code>命令查看所有的设备，之后再插入SD卡，再次使用<code>df</code>命令，多出来的设备即为SD卡。在笔者电脑上为<code>/dev/sdb1</code></p>
+</blockquote>
+<p>知道SD卡设备名称后先将SD卡卸载掉，命令如下</p>
+<p><code>sudo umount /dev/sdb1</code></p>
+<p>之后用<code>mkdosfs</code>命令来格式化SD卡，-F来指定文件格式，-v指定设备名称</p>
+<p><code>sudo mkdosfs -F 32 -v /dev/sdb1</code></p>
+<p>至此，SD卡格式化完成</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[解魔方机器人第一阶段]]></title>
       <url>http://yoursite.com/2017/02/02/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5/</url>
       <content type="html"><![CDATA[<p>今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。</p>
