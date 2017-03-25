@@ -343,21 +343,15 @@
 
       
         
-          
-            <p>本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。</p>
+          <p>本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。</p>
 <p>总述一下准备过程，去官网下载NOOBS，解压后将文件放到格式化后的SD卡中即可，剩下的就把卡插到树莓派中，通电，树莓派会自动进入安装界面。</p>
-<p>接下来说明一下在Ubuntu下面通过CLI格式SD卡的步骤。</p>
-<p>这里使用<code>mkdosfs</code>（make-dos-files-system）命令来格式SD卡，文件格式为FAT32。格式SD卡前先需要查出SD卡的设备名称。</p>
-<blockquote>
-<p>首先在未插入SD卡时使用<code>df</code>命令查看所有的设备，之后再插入SD卡，再次使用<code>df</code>命令，多出来的设备即为SD卡。在笔者电脑上为<code>/dev/sdb1</code></p>
-</blockquote>
-<p>知道SD卡设备名称后先将SD卡卸载掉，命令如下</p>
-<p><code>sudo umount /dev/sdb1</code></p>
-<p>之后用<code>mkdosfs</code>命令来格式化SD卡，-F来指定文件格式，-v指定设备名称</p>
-<p><code>sudo mkdosfs -F 32 -v /dev/sdb1</code></p>
-<p>至此，SD卡格式化完成</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/03/25/树莓派安装系统/" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
