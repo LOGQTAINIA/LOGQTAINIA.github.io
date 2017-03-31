@@ -4,6 +4,21 @@
   
     
     <entry>
+      <title><![CDATA[解魔方机器人调试遇到的问题]]></title>
+      <url>http://yoursite.com/2017/03/31/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E8%B0%83%E8%AF%95%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</url>
+      <content type="html"><![CDATA[<p>最近已经把解魔方机器人的机械搭完了，开始进入调程序部分，这里记录一下调程序过程遇到的问题</p>
+<ol>
+<li>步进电机无反应</li>
+</ol>
+<p>先将步进电机插到别的驱动板上，再更换驱动板，最后发现是驱动板的STEP和DIR两根线插反了</p>
+<ol>
+<li>步进电机偶尔会以非常慢的速度转动</li>
+</ol>
+<p>首先排查硬件，最后把问题定位出来发现是在调用<code>MultiStepper</code>类后再调用<code>AccelStepper</code>类导致的，待解决中</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[树莓派安装系统]]></title>
       <url>http://yoursite.com/2017/03/25/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F/</url>
       <content type="html"><![CDATA[<p>本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。</p>

@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="树莓派（Raspberry Pi）," />
+  <meta name="keywords" content="解魔方机器人 Arduino," />
 
 
 
@@ -84,19 +84,40 @@
 
 
 
-<meta name="description" content="本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。
-总述一下准备过程，去官网下载NOOBS，解压后将文件放到格式化后的SD卡中即可，剩下的就把卡插到树莓派中，通电，树莓派会自动进入安装界面。">
+<meta name="description" content="最近已经把解魔方机器人的机械搭完了，开始进入调程序部分，这里记录一下调程序过程遇到的问题
+
+步进电机无反应
+
+先将步进电机插到别的驱动板上，再更换驱动板，最后发现是驱动板的STEP和DIR两根线插反了
+
+步进电机偶尔会以非常慢的速度转动
+
+首先排查硬件，最后把问题定位出来发现是在调用MultiStepper类后再调用AccelStepper类导致的，待解决中">
 <meta property="og:type" content="article">
-<meta property="og:title" content="树莓派安装系统">
-<meta property="og:url" content="http://yoursite.com/2017/03/25/树莓派安装系统/index.html">
+<meta property="og:title" content="解魔方机器人调试遇到的问题">
+<meta property="og:url" content="http://yoursite.com/2017/03/31/解魔方机器人调试遇到的问题/index.html">
 <meta property="og:site_name" content="Logqtainia's Blog">
-<meta property="og:description" content="本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。
-总述一下准备过程，去官网下载NOOBS，解压后将文件放到格式化后的SD卡中即可，剩下的就把卡插到树莓派中，通电，树莓派会自动进入安装界面。">
-<meta property="og:updated_time" content="2017-03-31T06:14:47.499Z">
+<meta property="og:description" content="最近已经把解魔方机器人的机械搭完了，开始进入调程序部分，这里记录一下调程序过程遇到的问题
+
+步进电机无反应
+
+先将步进电机插到别的驱动板上，再更换驱动板，最后发现是驱动板的STEP和DIR两根线插反了
+
+步进电机偶尔会以非常慢的速度转动
+
+首先排查硬件，最后把问题定位出来发现是在调用MultiStepper类后再调用AccelStepper类导致的，待解决中">
+<meta property="og:updated_time" content="2017-03-31T06:14:22.128Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="树莓派安装系统">
-<meta name="twitter:description" content="本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。
-总述一下准备过程，去官网下载NOOBS，解压后将文件放到格式化后的SD卡中即可，剩下的就把卡插到树莓派中，通电，树莓派会自动进入安装界面。">
+<meta name="twitter:title" content="解魔方机器人调试遇到的问题">
+<meta name="twitter:description" content="最近已经把解魔方机器人的机械搭完了，开始进入调程序部分，这里记录一下调程序过程遇到的问题
+
+步进电机无反应
+
+先将步进电机插到别的驱动板上，再更换驱动板，最后发现是驱动板的STEP和DIR两根线插反了
+
+步进电机偶尔会以非常慢的速度转动
+
+首先排查硬件，最后把问题定位出来发现是在调用MultiStepper类后再调用AccelStepper类导致的，待解决中">
 
 
 
@@ -124,13 +145,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/03/25/树莓派安装系统/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/03/31/解魔方机器人调试遇到的问题/"/>
 
 
 
 
 
-  <title> 树莓派安装系统 | Logqtainia's Blog </title>
+  <title> 解魔方机器人调试遇到的问题 | Logqtainia's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -266,7 +287,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/25/树莓派安装系统/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/31/解魔方机器人调试遇到的问题/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Logqtainia">
@@ -290,7 +311,7 @@
             
             
               
-                树莓派安装系统
+                解魔方机器人调试遇到的问题
               
             
           </h1>
@@ -305,8 +326,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-25T20:00:27+08:00">
-                2017-03-25
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-31T14:09:16+08:00">
+                2017-03-31
               </time>
             
 
@@ -341,19 +362,15 @@
       
 
       
-        <p>本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。</p>
-<p>总述一下准备过程，去官网下载NOOBS，解压后将文件放到格式化后的SD卡中即可，剩下的就把卡插到树莓派中，通电，树莓派会自动进入安装界面。</p>
-<a id="more"></a>
-<p>接下来说明一下在Ubuntu下面通过CLI格式SD卡的步骤。</p>
-<p>这里使用<code>mkdosfs</code>（make-dos-files-system）命令来格式SD卡，文件格式为FAT32。格式SD卡前先需要查出SD卡的设备名称。</p>
-<blockquote>
-<p>首先在未插入SD卡时使用<code>df</code>命令查看所有的设备，之后再插入SD卡，再次使用<code>df</code>命令，多出来的设备即为SD卡。在笔者电脑上为<code>/dev/sdb1</code></p>
-</blockquote>
-<p>知道SD卡设备名称后先将SD卡卸载掉，命令如下</p>
-<p><code>sudo umount /dev/sdb1</code></p>
-<p>之后用<code>mkdosfs</code>命令来格式化SD卡，-F来指定文件格式，-v指定设备名称</p>
-<p><code>sudo mkdosfs -F 32 -v /dev/sdb1</code></p>
-<p>至此，SD卡格式化完成</p>
+        <p>最近已经把解魔方机器人的机械搭完了，开始进入调程序部分，这里记录一下调程序过程遇到的问题</p>
+<ol>
+<li>步进电机无反应</li>
+</ol>
+<p>先将步进电机插到别的驱动板上，再更换驱动板，最后发现是驱动板的STEP和DIR两根线插反了</p>
+<ol>
+<li>步进电机偶尔会以非常慢的速度转动</li>
+</ol>
+<p>首先排查硬件，最后把问题定位出来发现是在调用<code>MultiStepper</code>类后再调用<code>AccelStepper</code>类导致的，待解决中</p>
 
       
     </div>
@@ -377,7 +394,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/树莓派（Raspberry-Pi）/" rel="tag"># 树莓派（Raspberry Pi）</a>
+            <a href="/tags/解魔方机器人-Arduino/" rel="tag"># 解魔方机器人 Arduino</a>
           
         </div>
       
@@ -386,8 +403,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/02/解魔方机器人第一阶段/" rel="next" title="解魔方机器人第一阶段">
-                <i class="fa fa-chevron-left"></i> 解魔方机器人第一阶段
+              <a href="/2017/03/25/树莓派安装系统/" rel="next" title="树莓派安装系统">
+                <i class="fa fa-chevron-left"></i> 树莓派安装系统
               </a>
             
           </div>
@@ -395,10 +412,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/03/31/解魔方机器人调试遇到的问题/" rel="prev" title="解魔方机器人调试遇到的问题">
-                解魔方机器人调试遇到的问题 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
