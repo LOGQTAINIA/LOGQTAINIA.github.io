@@ -9,6 +9,7 @@
       <content type="html"><![CDATA[<p>现在是大三下学期14周的周四，转眼这学期已进入了尾声，这学期做的主要的事情除了魔方机器人就是计算机博弈校内赛了，在14周周一当场答辩之后，校内赛终于可以说是告一段落了，而且最后也是happy ending，在这里记录一下这段宝贵的经历。</p>
 <a id="more"></a>
 <p>简单概括一下这事件，校内赛决赛一共八支队伍，我们队伍质疑了其中五支队伍，其中三支队伍当场退赛，剩下两只队伍在赛后1支成绩降等（主观上退赛），另一支队伍成绩降等，但是取消国赛资格，我们队伍和另一支队伍参加国赛。</p>
+<hr>
 <p>To be continued</p>
 ]]></content>
     </entry>
@@ -46,6 +47,11 @@
 </blockquote>
 <p>将代码改成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while (stepper[id]-&gt;distanceToGo() != 0) &#123;</span><br><span class="line">      stepper[id]-&gt;setSpeed(SPEED);</span><br><span class="line">      stepper[id]-&gt;runSpeedToPosition();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>问题解决，之后测试问题2，发现问题2也消失了</p>
+<hr>
+<ol>
+<li>在整体旋转魔方时候，魔方经常掉</li>
+</ol>
+<p>这是由于机械臂夹的不够紧造成的，解决办法很简单，在每次旋转魔方前，让机械臂再“靠近”魔方一些</p>
 ]]></content>
     </entry>
     
@@ -99,6 +105,7 @@
 <li>如果遇到了诡异的问题，记得Build-Rebuild Poject。</li>
 <li>Color类中hsv的区间分别为[0, 360), [0, 1], [0, 1], 而opencv中区间为[0, 180), [0, 255], [0, 255], 为了提高精度建议把sv值乘以255。</li>
 <li>调用解魔方的代码时，记得检查表示魔方状态字符串的格式，主要是中心块的顺序。</li>
+<li>在没有给app相机权限的前提下，打开载入魔方的页面会直接退出app</li>
 </ul>
 <hr>
 <h1 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h1><ul>

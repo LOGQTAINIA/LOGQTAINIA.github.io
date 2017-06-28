@@ -92,7 +92,7 @@
 <meta property="og:site_name" content="Logqtainia's Blog">
 <meta property="og:description" content="今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。
 之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。">
-<meta property="og:updated_time" content="2017-02-03T12:40:44.897Z">
+<meta property="og:updated_time" content="2017-06-28T11:15:13.479Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解魔方机器人第一阶段">
 <meta name="twitter:description" content="今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。
@@ -369,6 +369,7 @@
 <li>如果遇到了诡异的问题，记得Build-Rebuild Poject。</li>
 <li>Color类中hsv的区间分别为[0, 360), [0, 1], [0, 1], 而opencv中区间为[0, 180), [0, 255], [0, 255], 为了提高精度建议把sv值乘以255。</li>
 <li>调用解魔方的代码时，记得检查表示魔方状态字符串的格式，主要是中心块的顺序。</li>
+<li>在没有给app相机权限的前提下，打开载入魔方的页面会直接退出app</li>
 </ul>
 <hr>
 <h1 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h1><ul>
