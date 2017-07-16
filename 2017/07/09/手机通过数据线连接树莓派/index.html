@@ -84,16 +84,16 @@
 
 
 
-<meta name="description" content="脑内千山万水，不如脚下一步。">
+<meta name="description" content="在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="树莓派raspberry手机+数据线连接树莓派">
-<meta property="og:url" content="http://yoursite.com/2017/07/09/树莓派raspberry手机-数据线连接树莓派/index.html">
+<meta property="og:title" content="android手机通过数据线连接树莓派">
+<meta property="og:url" content="http://yoursite.com/2017/07/09/手机通过数据线连接树莓派/index.html">
 <meta property="og:site_name" content="Logqtainia's Blog">
-<meta property="og:description" content="脑内千山万水，不如脚下一步。">
-<meta property="og:updated_time" content="2017-07-09T03:14:04.911Z">
+<meta property="og:description" content="在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。">
+<meta property="og:updated_time" content="2017-07-16T09:32:56.731Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="树莓派raspberry手机+数据线连接树莓派">
-<meta name="twitter:description" content="脑内千山万水，不如脚下一步。">
+<meta name="twitter:title" content="android手机通过数据线连接树莓派">
+<meta name="twitter:description" content="在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/07/09/树莓派raspberry手机-数据线连接树莓派/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/09/手机通过数据线连接树莓派/"/>
 
 
 
 
 
-  <title> 树莓派raspberry手机+数据线连接树莓派 | Logqtainia's Blog </title>
+  <title> android手机通过数据线连接树莓派 | Logqtainia's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -263,7 +263,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/09/树莓派raspberry手机-数据线连接树莓派/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/09/手机通过数据线连接树莓派/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Logqtainia">
@@ -287,7 +287,7 @@
             
             
               
-                树莓派raspberry手机+数据线连接树莓派
+                android手机通过数据线连接树莓派
               
             
           </h1>
@@ -338,7 +338,35 @@
       
 
       
-        
+        <p>在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。<br><a id="more"></a></p>
+<p>#设备清单：<br>android手机（小米6-系统7.1），树莓派3B，数据线</p>
+<p>#app清单：<br>JuiceSSH</p>
+<p>android上口碑爆棚的终端应用！</p>
+<p>Network Scan</p>
+<p>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
+<p>#操作步骤：</p>
+<ol>
+<li>首先确保树莓派开启了ssh功能，具体方法如下</li>
+</ol>
+<blockquote>
+<p>将最新系统烧写进SD卡，如果树莓派的SD卡工作在Windows环境下，则在”此电脑(我的电脑)”中可以看到一个名为”boot”的可移动磁盘，打开此磁盘，在磁盘根目录新建一个名为ssh(无后缀)的空文件，安全移除并弹出SD卡。如果此SD卡工作在Linux环境下，在终端中执行df命令你可以看到一个30m左右的fat32分区，cd进入此分区所对应的挂载点，用<code>touch ssh</code>命令创建名为ssh的文件，卸载并弹出SD卡</p>
+</blockquote>
+<ol>
+<li><p>给树莓派上电开机后，用数据线连接树莓派和手机，大部分手机可以在通知烂看到<code>正在通过USB充电</code>，代表连接成功</p>
+</li>
+<li><p>此时打开手机端的<code>USB网络共享</code>功能，再打开Network Scan，刷新后应该会在USB Network中看到一个带（ssh）标识的IP地址，这个就是树莓派的IP了</p>
+</li>
+<li><p>得到树莓派的IP之后就离胜利就不远了，打开JuiceSSH新建连接，认证信息中的昵称可随便填，用户名和密码的默认值为pi和raspberry，然后通过ssh登录树莓派，此处就不赘述了</p>
+</li>
+<li><p>之后树莓派便可以通过手机的USB网络共享而访问外部网络了，更新软件，安装vncserver什么的都可以了</p>
+</li>
+</ol>
+<p>关于原理，这里摘自参考资料</p>
+<blockquote>
+<p>因为树莓派官方系统和安卓系统都是基于Linux内核，在Linux中，USB接口可以虚拟为有线网口，也就是说，用数据线连接树莓派和安卓手机，就相当于将两台电脑主机用网线连接一样，而通过”USB网络共享”这个功能，可以将手机虚拟为一个”路由器”，而让树莓派变成了一个”网络终端”，从而组建起一个微型的”局域网”。</p>
+</blockquote>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://mlapp.cn/179.html" target="_blank" rel="external">树莓派折腾记:纯手机+数据线连接树莓派</a></p>
+
       
     </div>
 
@@ -425,8 +453,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -475,6 +512,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>
