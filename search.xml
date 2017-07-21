@@ -7,12 +7,12 @@
       <title><![CDATA[android手机通过数据线连接树莓派]]></title>
       <url>http://yoursite.com/2017/07/09/%E6%89%8B%E6%9C%BA%E9%80%9A%E8%BF%87%E6%95%B0%E6%8D%AE%E7%BA%BF%E8%BF%9E%E6%8E%A5%E6%A0%91%E8%8E%93%E6%B4%BE/</url>
       <content type="html"><![CDATA[<p>在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。<br><a id="more"></a></p>
-<h1 id="设备清单："><a href="#设备清单：" class="headerlink" title="设备清单："></a>设备清单：</h1><p>android手机（小米6-系统7.1），树莓派3B，数据线</p>
-<h1 id="app清单："><a href="#app清单：" class="headerlink" title="app清单："></a>app清单：</h1><p>JuiceSSH</p>
+<h1 id="设备清单"><a href="#设备清单" class="headerlink" title="设备清单"></a>设备清单</h1><p>android手机（小米6-系统7.1），树莓派3B，数据线</p>
+<h1 id="app清单"><a href="#app清单" class="headerlink" title="app清单"></a>app清单</h1><p>JuiceSSH</p>
 <p>android上口碑爆棚的终端应用！</p>
 <p>Network Scan</p>
 <p>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
-<h1 id="操作步骤："><a href="#操作步骤：" class="headerlink" title="操作步骤："></a>操作步骤：</h1><ol>
+<h1 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h1><ol>
 <li>首先确保树莓派开启了ssh功能，具体方法如下</li>
 </ol>
 <blockquote>
