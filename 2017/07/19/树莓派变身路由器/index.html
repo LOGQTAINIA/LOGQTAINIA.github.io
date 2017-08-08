@@ -92,7 +92,7 @@
 <meta property="og:site_name" content="Logqtainia's Blog">
 <meta property="og:description" content="最近在北海道大学参加HSI项目，由于宿舍没有无线网络，只有网线，而我又不想让笔记本24小时全天候开着当路由器，是时候折腾树莓派了！
 因为最新的树莓派3板载了无线网络适配器，所以可以像手机一样开启热点，变身成一个路由器。">
-<meta property="og:updated_time" content="2017-08-08T14:27:37.810Z">
+<meta property="og:updated_time" content="2017-08-08T14:33:33.095Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="树莓派变身路由器">
 <meta name="twitter:description" content="最近在北海道大学参加HSI项目，由于宿舍没有无线网络，只有网线，而我又不想让笔记本24小时全天候开着当路由器，是时候折腾树莓派了！
@@ -378,6 +378,7 @@
       
         <p>最近在北海道大学参加HSI项目，由于宿舍没有无线网络，只有网线，而我又不想让笔记本24小时全天候开着当路由器，是时候折腾树莓派了！</p>
 <p>因为最新的树莓派3板载了无线网络适配器，所以可以像手机一样开启热点，变身成一个路由器。<br><a id="more"></a></p>
+<hr>
 <h1 id="安装软件包"><a href="#安装软件包" class="headerlink" title="安装软件包"></a>安装软件包</h1><p>需要安装2个软件包</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install hostapd dnsmasq</span><br></pre></td></tr></table></figure>
 <p>hostapd 是 Host Access Point 守护进程，提供对基于 Linux 的无线接入点的强 WPA2 加密和身份验证。配置 hostapd 非常简单，它支持 WPA2-Personal 和 Enterprise，提供了对 WPA2-Personal 的独特修改，可让管理它变得更复杂或更简单。</p>
@@ -387,9 +388,10 @@
 <p>在文件开头增加一行：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">denyinterfaces wlan0</span><br></pre></td></tr></table></figure>
 <p>接下来设置wlan0的静态IP，修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/network/interfaces</span><br></pre></td></tr></table></figure></p>
-<p>把wlan0相关的内容改成为如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug wlan0</span><br><span class="line">#iface wlan0 inet manual</span><br><span class="line">#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</span><br><span class="line">iface wlan0 inet static</span><br><span class="line">address 192.168.8.1</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">network 192.168.8.0</span><br><span class="line">broadcast 192.168.8.255</span><br></pre></td></tr></table></figure></p>
-<p>192.168.8.1是给树莓派做路由器分配的网关IP，不能与去欲望其他路由器网关IP重复，若重复此处可改成其他网关。</p>
-<p>重启服务和wlan0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service dhcpcd restart</span><br><span class="line">sudo ifdown wlan0</span><br><span class="line">sudo ifup wlan0</span><br></pre></td></tr></table></figure></p>
+<p>把wlan0相关的内容改成为如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug wlan0</span><br><span class="line">#iface wlan0 inet manual</span><br><span class="line">#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</span><br><span class="line">iface wlan0 inet static</span><br><span class="line">	address 192.168.8.1</span><br><span class="line">	netmask 255.255.255.0</span><br><span class="line">	network 192.168.8.0</span><br><span class="line">	broadcast 192.168.8.255</span><br></pre></td></tr></table></figure></p>
+<p>192.168.8.1是给树莓派做路由器分配的网关IP，不能与局域网其他路由器网关IP重复，若重复此处可改成其他网关。</p>
+<p>重启服务和wlan0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service dhcpcd restart</span><br><span class="line">sudo ifdown wlan0</span><br><span class="line">sudo ifup wlan0</span><br></pre></td></tr></table></figure>
 <p>通过<code>ifconfig</code>可以看到wlan0的IP已经被修改</p>
 <hr>
 <h1 id="配置hostapd"><a href="#配置hostapd" class="headerlink" title="配置hostapd"></a>配置hostapd</h1>
