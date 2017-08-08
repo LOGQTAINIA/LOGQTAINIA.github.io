@@ -90,10 +90,15 @@
 <meta property="og:url" content="http://yoursite.com/2017/07/09/手机通过数据线连接树莓派/index.html">
 <meta property="og:site_name" content="Logqtainia's Blog">
 <meta property="og:description" content="在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。">
-<meta property="og:updated_time" content="2017-07-21T02:39:56.126Z">
+<meta property="og:image" content="http://ost0gzer5.bkt.clouddn.com/IMG_20170808_214832.jpg">
+<meta property="og:image" content="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-37-436_com.sonelli.juicessh.png">
+<meta property="og:image" content="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-42-757_com.bitsworking.networkscanner.app.png">
+<meta property="og:image" content="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png">
+<meta property="og:updated_time" content="2017-08-08T13:06:10.057Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="android手机通过数据线连接树莓派">
 <meta name="twitter:description" content="在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。">
+<meta name="twitter:image" content="http://ost0gzer5.bkt.clouddn.com/IMG_20170808_214832.jpg">
 
 
 
@@ -374,11 +379,13 @@
 
       
         <p>在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。<br><a id="more"></a></p>
+<hr>
 <h1 id="设备清单"><a href="#设备清单" class="headerlink" title="设备清单"></a>设备清单</h1><p>android手机（小米6-系统7.1），树莓派3B，数据线</p>
-<h1 id="app清单"><a href="#app清单" class="headerlink" title="app清单"></a>app清单</h1><p>JuiceSSH</p>
-<p>android上口碑爆棚的终端应用！</p>
-<p>Network Scan</p>
-<p>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
+<hr>
+<h1 id="app清单"><a href="#app清单" class="headerlink" title="app清单"></a>app清单</h1><p><img src="http://ost0gzer5.bkt.clouddn.com/IMG_20170808_214832.jpg" alt="app list"></p>
+<p>##JuiceSSH<br><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-37-436_com.sonelli.juicessh.png" alt=""><br>android上口碑爆棚的终端应用！</p>
+<p>##Network Scan<br><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-42-757_com.bitsworking.networkscanner.app.png" alt=""><br>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
+<hr>
 <h1 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h1><ol>
 <li>首先确保树莓派开启了ssh功能，具体方法如下</li>
 </ol>
@@ -388,8 +395,11 @@
 <ol>
 <li><p>给树莓派上电开机后，用数据线连接树莓派和手机，大部分手机可以在通知烂看到<code>正在通过USB充电</code>，代表连接成功</p>
 </li>
-<li><p>此时打开手机端的<code>USB网络共享</code>功能，再打开Network Scan，刷新后应该会在USB Network中看到一个带（ssh）标识的IP地址，这个就是树莓派的IP了</p>
+<li><p>此时打开手机端的<code>USB网络共享</code>功能，再打开Network Scan，刷新后应该会在USB Network中看到一个带（ssh）标识的IP地址，这个就是树莓派的IP了，见下图</p>
 </li>
+</ol>
+<p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png" alt=""></p>
+<ol>
 <li><p>得到树莓派的IP之后就离胜利就不远了，打开JuiceSSH新建连接，认证信息中的昵称可随便填，用户名和密码的默认值为pi和raspberry，然后通过ssh登录树莓派，此处就不赘述了</p>
 </li>
 <li><p>之后树莓派便可以通过手机的USB网络共享而访问外部网络了，更新软件，安装vncserver什么的都可以了</p>
@@ -399,6 +409,7 @@
 <blockquote>
 <p>因为树莓派官方系统和安卓系统都是基于Linux内核，在Linux中，USB接口可以虚拟为有线网口，也就是说，用数据线连接树莓派和安卓手机，就相当于将两台电脑主机用网线连接一样，而通过”USB网络共享”这个功能，可以将手机虚拟为一个”路由器”，而让树莓派变成了一个”网络终端”，从而组建起一个微型的”局域网”。</p>
 </blockquote>
+<hr>
 <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://mlapp.cn/179.html" target="_blank" rel="external">树莓派折腾记:纯手机+数据线连接树莓派</a></p>
 
       
