@@ -94,7 +94,7 @@
 <meta property="og:image" content="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-37-436_com.sonelli.juicessh.png-sample">
 <meta property="og:image" content="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-42-757_com.bitsworking.networkscanner.app.png-sample">
 <meta property="og:image" content="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png-sample">
-<meta property="og:updated_time" content="2017-08-08T13:41:03.365Z">
+<meta property="og:updated_time" content="2017-08-08T13:53:28.479Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="android手机通过数据线连接树莓派">
 <meta name="twitter:description" content="在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。">
@@ -387,19 +387,16 @@
 <h2 id="Network-Scan"><a href="#Network-Scan" class="headerlink" title="Network Scan"></a>Network Scan</h2><p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-42-757_com.bitsworking.networkscanner.app.png-sample" alt=""><br>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
 <hr>
 <h1 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h1><ol>
-<li>首先确保树莓派开启了ssh功能，具体方法如下</li>
-</ol>
+<li><p>首先确保树莓派开启了ssh功能，具体方法如下</p>
 <blockquote>
 <p>将最新系统烧写进SD卡，如果树莓派的SD卡工作在Windows环境下，则在”此电脑(我的电脑)”中可以看到一个名为”boot”的可移动磁盘，打开此磁盘，在磁盘根目录新建一个名为ssh(无后缀)的空文件，安全移除并弹出SD卡。如果此SD卡工作在Linux环境下，在终端中执行df命令你可以看到一个30m左右的fat32分区，cd进入此分区所对应的挂载点，用<code>touch ssh</code>命令创建名为ssh的文件，卸载并弹出SD卡</p>
 </blockquote>
-<ol>
+</li>
 <li><p>给树莓派上电开机后，用数据线连接树莓派和手机，大部分手机可以在通知烂看到<code>正在通过USB充电</code>，代表连接成功</p>
 </li>
 <li><p>此时打开手机端的<code>USB网络共享</code>功能，再打开Network Scan，刷新后应该会在USB Network中看到一个带（ssh）标识的IP地址，这个就是树莓派的IP了，见下图</p>
+<p> <img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png-sample" alt=""></p>
 </li>
-</ol>
-<p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png-sample" alt=""></p>
-<ol>
 <li><p>得到树莓派的IP之后就离胜利就不远了，打开JuiceSSH新建连接，认证信息中的昵称可随便填，用户名和密码的默认值为pi和raspberry，然后通过ssh登录树莓派，此处就不赘述了</p>
 </li>
 <li><p>之后树莓派便可以通过手机的USB网络共享而访问外部网络了，更新软件，安装vncserver什么的都可以了</p>

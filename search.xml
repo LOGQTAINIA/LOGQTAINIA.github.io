@@ -34,19 +34,16 @@
 <h2 id="Network-Scan"><a href="#Network-Scan" class="headerlink" title="Network Scan"></a>Network Scan</h2><p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-42-757_com.bitsworking.networkscanner.app.png-sample" alt=""><br>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
 <hr>
 <h1 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h1><ol>
-<li>首先确保树莓派开启了ssh功能，具体方法如下</li>
-</ol>
+<li><p>首先确保树莓派开启了ssh功能，具体方法如下</p>
 <blockquote>
 <p>将最新系统烧写进SD卡，如果树莓派的SD卡工作在Windows环境下，则在”此电脑(我的电脑)”中可以看到一个名为”boot”的可移动磁盘，打开此磁盘，在磁盘根目录新建一个名为ssh(无后缀)的空文件，安全移除并弹出SD卡。如果此SD卡工作在Linux环境下，在终端中执行df命令你可以看到一个30m左右的fat32分区，cd进入此分区所对应的挂载点，用<code>touch ssh</code>命令创建名为ssh的文件，卸载并弹出SD卡</p>
 </blockquote>
-<ol>
+</li>
 <li><p>给树莓派上电开机后，用数据线连接树莓派和手机，大部分手机可以在通知烂看到<code>正在通过USB充电</code>，代表连接成功</p>
 </li>
 <li><p>此时打开手机端的<code>USB网络共享</code>功能，再打开Network Scan，刷新后应该会在USB Network中看到一个带（ssh）标识的IP地址，这个就是树莓派的IP了，见下图</p>
+<p> <img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png-sample" alt=""></p>
 </li>
-</ol>
-<p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png-sample" alt=""></p>
-<ol>
 <li><p>得到树莓派的IP之后就离胜利就不远了，打开JuiceSSH新建连接，认证信息中的昵称可随便填，用户名和密码的默认值为pi和raspberry，然后通过ssh登录树莓派，此处就不赘述了</p>
 </li>
 <li><p>之后树莓派便可以通过手机的USB网络共享而访问外部网络了，更新软件，安装vncserver什么的都可以了</p>
@@ -89,21 +86,21 @@
       <url>http://yoursite.com/2017/03/31/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E8%B0%83%E8%AF%95%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</url>
       <content type="html"><![CDATA[<p>最近已经把解魔方机器人的机械搭完了，开始进入调程序部分，这里记录一下调程序过程遇到的问题</p>
 <hr>
-<ol>
+<ul>
 <li>步进电机无反应</li>
-</ol>
+</ul>
 <p>先将步进电机插到别的驱动板上，再更换驱动板，最后发现是驱动板的STEP和DIR两根线插反了</p>
 <a id="more"></a>
 <hr>
-<ol>
+<ul>
 <li>步进电机偶尔会以非常慢的速度转动</li>
-</ol>
+</ul>
 <p>首先排查硬件，最后把问题定位出来发现是在调用<code>MultiStepper</code>类后再调用<code>AccelStepper</code>类导致的，最后不算解决，应该说是避免了这个问题，详情见问题3</p>
 <hr>
-<ol>
+<ul>
 <li>将步进电机转动的方法变速<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stepper[id]-&gt;runToPosition();</span><br></pre></td></tr></table></figure>
 </li>
-</ol>
+</ul>
 <p>改成匀速<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">while (stepper[id]-&gt;distanceToGo() != 0) &#123;</span><br><span class="line">      stepper[id]-&gt;runSpeed();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>电机以非常慢的速度转动</p>
 <p>去google了一下，发现有人遇到类似的情况，参考<a href="https://forum.arduino.cc/index.php?topic=305882.0" target="_blank" rel="external">这里</a>的#4</p>
@@ -118,9 +115,9 @@
 <p>将代码改成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while (stepper[id]-&gt;distanceToGo() != 0) &#123;</span><br><span class="line">      stepper[id]-&gt;setSpeed(SPEED);</span><br><span class="line">      stepper[id]-&gt;runSpeedToPosition();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>问题解决，之后测试问题2，发现问题2也消失了</p>
 <hr>
-<ol>
+<ul>
 <li>在整体旋转魔方时候，魔方经常掉</li>
-</ol>
+</ul>
 <p>这是由于机械臂夹的不够紧造成的，解决办法很简单，在每次旋转魔方前，让机械臂再“靠近”魔方一些</p>
 ]]></content>
     </entry>
