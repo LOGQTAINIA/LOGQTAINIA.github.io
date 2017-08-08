@@ -23,6 +23,28 @@
     </entry>
     
     <entry>
+      <title><![CDATA[树莓派变身路由器]]></title>
+      <url>http://yoursite.com/2017/07/19/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%8F%98%E8%BA%AB%E8%B7%AF%E7%94%B1%E5%99%A8/</url>
+      <content type="html"><![CDATA[<p>最近在北海道大学参加HSI项目，由于宿舍没有无线网络，只有网线，而我又不想让笔记本24小时全天候开着当路由器，是时候折腾树莓派了！</p>
+<p>因为最新的树莓派3板载了无线网络适配器，所以可以像手机一样开启热点，变身成一个路由器。<br><a id="more"></a></p>
+<h1 id="安装软件包"><a href="#安装软件包" class="headerlink" title="安装软件包"></a>安装软件包</h1><p>需要安装2个软件包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install hostapd dnsmasq</span><br></pre></td></tr></table></figure>
+<p>hostapd 是 Host Access Point 守护进程，提供对基于 Linux 的无线接入点的强 WPA2 加密和身份验证。配置 hostapd 非常简单，它支持 WPA2-Personal 和 Enterprise，提供了对 WPA2-Personal 的独特修改，可让管理它变得更复杂或更简单。</p>
+<p>dnsmasq是一个小巧且方便地用于配置DNS和DHCP的工具，适用于小型网络，它提供了DNS功能和可选择的DHCP功能。主用适用于NAT的家庭网络，用modem，cable modem，ADSL设备连接到因特网。</p>
+<hr>
+<h1 id="设置静态IP"><a href="#设置静态IP" class="headerlink" title="设置静态IP"></a>设置静态IP</h1><p>需要将无线接口wlan0的IP配置成静态地址<br>首先让dhcpcd不再管理wlan0，避免设置冲突<br>修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/dhcpcd.conf</span><br></pre></td></tr></table></figure></p>
+<p>在文件开头增加一行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">denyinterfaces wlan0</span><br></pre></td></tr></table></figure>
+<p>接下来设置wlan0的静态IP，修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/network/interfaces</span><br></pre></td></tr></table></figure></p>
+<p>把wlan0相关的内容改成为如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug wlan0</span><br><span class="line">#iface wlan0 inet manual</span><br><span class="line">#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</span><br><span class="line">iface wlan0 inet static</span><br><span class="line">address 192.168.8.1</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">network 192.168.8.0</span><br><span class="line">broadcast 192.168.8.255</span><br></pre></td></tr></table></figure></p>
+<p>192.168.8.1是给树莓派做路由器分配的网关IP，不能与去欲望其他路由器网关IP重复，若重复此处可改成其他网关。</p>
+<p>重启服务和wlan0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service dhcpcd restart</span><br><span class="line">sudo ifdown wlan0</span><br><span class="line">sudo ifup wlan0</span><br></pre></td></tr></table></figure></p>
+<p>通过<code>ifconfig</code>可以看到wlan0的IP已经被修改</p>
+<hr>
+<h1 id="配置hostapd"><a href="#配置hostapd" class="headerlink" title="配置hostapd"></a>配置hostapd</h1>]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[android手机通过数据线连接树莓派]]></title>
       <url>http://yoursite.com/2017/07/09/%E6%89%8B%E6%9C%BA%E9%80%9A%E8%BF%87%E6%95%B0%E6%8D%AE%E7%BA%BF%E8%BF%9E%E6%8E%A5%E6%A0%91%E8%8E%93%E6%B4%BE/</url>
       <content type="html"><![CDATA[<p>在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。<br><a id="more"></a></p>
