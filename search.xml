@@ -29,9 +29,9 @@
 <hr>
 <h1 id="设备清单"><a href="#设备清单" class="headerlink" title="设备清单"></a>设备清单</h1><p>android手机（小米6-系统7.1），树莓派3B，数据线</p>
 <hr>
-<h1 id="app清单"><a href="#app清单" class="headerlink" title="app清单"></a>app清单</h1><p><img src="http://ost0gzer5.bkt.clouddn.com/IMG_20170808_214832.jpg" alt="app list"></p>
-<h2 id="JuiceSSH"><a href="#JuiceSSH" class="headerlink" title="JuiceSSH"></a>JuiceSSH</h2><p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-37-436_com.sonelli.juicessh.png" alt=""><br>android上口碑爆棚的终端应用！</p>
-<h2 id="Network-Scan"><a href="#Network-Scan" class="headerlink" title="Network Scan"></a>Network Scan</h2><p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-42-757_com.bitsworking.networkscanner.app.png" alt=""><br>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
+<h1 id="app清单"><a href="#app清单" class="headerlink" title="app清单"></a>app清单</h1><p><img src="http://ost0gzer5.bkt.clouddn.com/IMG_20170808_214832.jpg-sample" alt="app list"></p>
+<h2 id="JuiceSSH"><a href="#JuiceSSH" class="headerlink" title="JuiceSSH"></a>JuiceSSH</h2><p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-37-436_com.sonelli.juicessh.png-sample" alt=""><br>android上口碑爆棚的终端应用！</p>
+<h2 id="Network-Scan"><a href="#Network-Scan" class="headerlink" title="Network Scan"></a>Network Scan</h2><p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-51-42-757_com.bitsworking.networkscanner.app.png-sample" alt=""><br>Network Scan可查找与手机处于同一网络下的所有设备对应的IP信息，当你无法确定树莓派当前的IP时，可通过此软件迅速查询到，下文就是通过USB共享网络后使用此app来得到树莓派的IP地址的</p>
 <hr>
 <h1 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h1><ol>
 <li>首先确保树莓派开启了ssh功能，具体方法如下</li>
@@ -45,7 +45,7 @@
 <li><p>此时打开手机端的<code>USB网络共享</code>功能，再打开Network Scan，刷新后应该会在USB Network中看到一个带（ssh）标识的IP地址，这个就是树莓派的IP了，见下图</p>
 </li>
 </ol>
-<p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png" alt=""></p>
+<p><img src="http://ost0gzer5.bkt.clouddn.com/Screenshot_2017-08-08-21-53-13-680_com.bitsworking.networkscanner.app.png-sample" alt=""></p>
 <ol>
 <li><p>得到树莓派的IP之后就离胜利就不远了，打开JuiceSSH新建连接，认证信息中的昵称可随便填，用户名和密码的默认值为pi和raspberry，然后通过ssh登录树莓派，此处就不赘述了</p>
 </li>
