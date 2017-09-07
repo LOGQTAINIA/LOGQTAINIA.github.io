@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title><![CDATA[用正则表达式判断一个二进制数能否被3整除]]></title>
+      <url>http://yoursite.com/2017/09/07/%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%95%B0%E8%83%BD%E5%90%A6%E8%A2%AB3%E6%95%B4%E9%99%A4/</url>
+      <content type="html"><![CDATA[<p>问题描述如标题，很简洁：用一个正则表达式判断一个二进制数能否被3整除</p>
+<p>比如：<br>000         True<br>11        True<br>1001    True<br>1011     False</p>
+<a id="more"></a>
+<p>解决思路也很简单：首先用有限状态机（FSM）实现对能否被3整除的判断，然后将其转换成正则</p>
+<p>有限状态机图如下，分析过程摘自matrix67，并在此感谢一下神犇</p>
+<p><img src="http://www.matrix67.com/blogimage/200812011.gif" alt=""></p>
+<blockquote>
+<p>注意到，一个二进制数后面加一个“0”相当于该数乘以2，一个二进制数后面加一个“1”相当于该数乘2加1。设定三个状态，分别叫做0、1和2，它们表示当前的数除以3所得的余数。如果对于某个i和j，有i<em>2≡j (mod 3)，就加一条路径i→j，路径上标一个字符“0”；如果i</em>2+1≡j (mod 3)，则在路径i→j上标记“1”。状态0既是我们的初始状态，也是我们的最终状态。我们的自动机就做好了。现在，假如二进制数10010走进来了。从状态0出发，机器首先读到一个“1”，于是当前位置挪到状态1，表明目前该数模3余1；然后，系统读了一个“0”，我们紧跟着走到状态2，表明二进制数“10”被3除余2；下一步，我们回到状态1，表明“100”除以3余1；再往后，我们得知“1001”能被3整除。最后呢，我们读到一个0，“1001”的两倍当然还是能被3整除，我们依旧停留在原位。我们得到结论：二进制数10010能被3整除。<br>    有限状态自动机是可以转化为正则表达式的。上面的这个自动机转化起来非常容易。我们可以先试着用自然语言叙述一下。首先，每个二进制数第一位必然为“1”。到达状态1后，我们可以随意地、任意多次地在状态1周围绕圈圈，最终回到状态1。临近末尾，我们再读到一个“1”返回状态0，这之后随便读多少个“0”都可以了。现在问题分解为：我们又如何用正则表达式表述“从状态1出发随意地走最终回到状态1”呢？在本例中，这是很好描述的：它可以是字符串“1000..001”和“0111..110”的任意组合。把这些东西用正则表达式写出来，就是我们刚才那个神秘的式子：1((10<em>1)|(01</em>0))<em>10</em> 。</p>
+</blockquote>
+<p>最后再加上位置标识符，<code>^1((10*1)|(01*0))*10* $</code></p>
+<p>从自然语言可以理解正则，但是从有限状态机转换到正则的通式通法还不会。</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://blog.2baxb.me/archives/588" target="_blank" rel="external">使用正则表达式判断二进制数字是否能被3整除</a></p>
+<p><a href="http://www.matrix67.com/blog/archives/1089" target="_blank" rel="external">趣题：用正则表达式判断一个二进制数是否能被3整除</a></p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[ubuntu下安装jsoncpp时遇到的坑]]></title>
       <url>http://yoursite.com/2017/07/21/ubuntu%E4%B8%8B%E5%AE%89%E8%A3%85jsoncpp%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91/</url>
       <content type="html"><![CDATA[<p>为了在C++程序中解析json文件而选择了jsoncpp，但是安装过程并不是那么顺利，特写此文来记录踩过的坑<br><a id="more"></a><br>首先是执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libjsoncpp-dev</span><br></pre></td></tr></table></figure></p>
@@ -56,7 +75,7 @@
 <p>修改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DAEMON_CONF=&quot;/etc/hostapd/hostapd.conf&quot;</span><br></pre></td></tr></table></figure></p>
 <hr>
 <h1 id="安装DHCP服务"><a href="#安装DHCP服务" class="headerlink" title="安装DHCP服务"></a>安装DHCP服务</h1><p>安装命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install isc-dhcp-server</span><br></pre></td></tr></table></figure></p>
-<p>备份配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv /etc/dhcp/dhcpd.conf /etc/dhcp.dhcpd.config.bak</span><br></pre></td></tr></table></figure></p>
+<p>备份配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.config.bak</span><br></pre></td></tr></table></figure></p>
 <p>编辑新的配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/dhcp/dhcpd.conf</span><br></pre></td></tr></table></figure></p>
 <p>修改成如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">default-lease-time 600;</span><br><span class="line">max-lease-time 7200;</span><br><span class="line">log-facility local7;</span><br><span class="line"> </span><br><span class="line">subnet 192.168.8.0 netmask 255.255.255.0 &#123;</span><br><span class="line">  range 192.168.8.10 192.168.8.100;</span><br><span class="line">  option routers 192.168.8.1;</span><br><span class="line">  option broadcast-address 192.168.8.255;</span><br><span class="line">  option domain-name-servers 8.8.8.8,8.8.4.4;</span><br><span class="line">  default-lease-time 600;</span><br><span class="line">  max-lease-time 7200;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>此处设置的IP与上面的IP网关对应</p>
