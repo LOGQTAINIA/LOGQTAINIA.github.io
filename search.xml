@@ -4,11 +4,55 @@
   
     
     <entry>
+      <title><![CDATA[记录构建test-suite时遇到的一个问题（开启PGO选项）]]></title>
+      <url>http://yoursite.com/2021/03/27/%25E8%25AE%25B0%25E5%25BD%2595%25E7%25BC%2596%25E8%25AF%2591test-suite%25E6%2597%25B6%25E9%2581%2587%25E5%2588%25B0%25E7%259A%2584%25E4%25B8%2580%25E4%25B8%25AA%25E9%2597%25AE%25E9%25A2%2598%25EF%25BC%2588%25E5%25BC%2580%25E5%2590%25AFPGO%25E9%2580%2589%25E9%25A1%25B9%25EF%25BC%2589/</url>
+      <content type="html"><![CDATA[<p>这几天在学着用test-suite来跑benchmark，主要是为了之后的研究课题做准备。test-suite的基本构建和使用没问题了，但是在准备构建带有PGO（Profile Guided Optimization）的版本时，遇到了点问题，折腾了两天终于解决了。</p>
+<span id="more"></span>
+<p>一切要从参考test-suite的<a href="https://llvm.org/docs/TestSuiteGuide.html">官网</a>构建说起，首先是普通的构建</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">% mkdir test-suite-build</span><br><span class="line">% <span class="built_in">cd</span> test-suite-build</span><br><span class="line">% cmake -DCMAKE_C_COMPILER=&lt;path to llvm build&gt;/bin/clang \</span><br><span class="line">        -C../test-suite/cmake/caches/O3.cmake \</span><br><span class="line">        ../test-suite</span><br></pre></td></tr></table></figure>
+<p>构建没问题，跑测试没问题，跑benchmark没问题；好，很有精神！</p>
+<p>之后准备构建用来跑PGO的test-suite，依然是参考官网的选项</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Profile generation run:</span></span><br><span class="line">% cmake -DTEST_SUITE_PROFILE_GENERATE=ON \</span><br><span class="line">        -DTEST_SUITE_RUN_TYPE=train \</span><br><span class="line">        ../test-suite</span><br><span class="line">% make</span><br><span class="line">% llvm-lit .</span><br></pre></td></tr></table></figure>
+<p>构建，有问题！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[ 83%] Building C object SingleSource/Regression/C/gcc-c-torture/execute/ieee/CMakeFiles/GCC-C-execute-ieee-fp-cmp-8e.dir/fp-cmp-8e.c.o</span><br><span class="line">[ 83%] Building C object SingleSource/Regression/C/gcc-c-torture/execute/ieee/CMakeFiles/GCC-C-execute-ieee-fp-cmp-3.dir/fp-cmp-3.c.o</span><br><span class="line">CMakeFiles/GCC-C-execute-ieee-compare-fp-3.dir/compare-fp-3.c.o: In <span class="keyword">function</span> `test2<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x4d): undefined reference to `link_error0&#x27;</span></span><br><span class="line">CMakeFiles/GCC-C-execute-ieee-compare-fp-3.dir/compare-fp-3.c.o: In <span class="keyword">function</span> `test3<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x8d): undefined reference to `link_error0&#x27;</span></span><br><span class="line">CMakeFiles/GCC-C-execute-ieee-compare-fp-3.dir/compare-fp-3.c.o: In <span class="keyword">function</span> `test5<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x113): undefined reference to `link_error1&#x27;</span></span><br><span class="line">CMakeFiles/GCC-C-execute-ieee-compare-fp-3.dir/compare-fp-3.c.o: In <span class="keyword">function</span> `test6<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x163): undefined reference to `link_error1&#x27;</span></span><br><span class="line">CMakeFiles/GCC-C-execute-ieee-compare-fp-3.dir/compare-fp-3.c.o: In <span class="keyword">function</span> `all_tests<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x1f0): undefined reference to `link_error0&#x27;</span></span><br><span class="line">compare-fp-3.c:(.text+0x223): undefined reference to `link_error0<span class="string">&#x27;</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x2f6): undefined reference to `link_error1&#x27;</span></span><br><span class="line">compare-fp-3.c:(.text+0x344): undefined reference to `link_error1<span class="string">&#x27;</span></span><br><span class="line"><span class="string">[ 83%] Linking C executable GCC-C-execute-ieee-fp-cmp-1</span></span><br><span class="line"><span class="string">clang-12: error: linker command failed with exit code 1 (use -v to see invocation)</span></span><br><span class="line"><span class="string">[ 83%] Building C object SingleSource/Regression/C/gcc-c-torture/execute/ieee/CMakeFiles/GCC-C-execute-ieee-fp-cmp-8l.dir/fp-cmp-8l.c.o</span></span><br></pre></td></tr></table></figure>
+<p>我这一个萌新看到这么一个巨型项目报错，很方啊。先是去网上搜，无果；群里问，无果；自己折腾了好久，最后的结论只是<code>-DTEST_SUITE_PROFILE_GENERATE=ON</code>这个选项会导致error。无奈睡前斗胆往llvm-dev邮件列表里发了一封<a href="https://lists.llvm.org/pipermail/llvm-dev/2021-March/149429.html">求助邮件</a>，睡醒看到两位大佬的回信，受到启发的我把注意力从error本身转移到报错的文件上，即<code>compare-fp-3.c</code>。文件的逻辑大体上是，测试编译器是否会在开启编译优化的情况下，将无效分支给消除掉</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">link_error0</span> <span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">link_error1</span> <span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span></span><br><span class="line">test1 (<span class="keyword">float</span> x, <span class="keyword">float</span> y)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ((x==y) &amp;&amp; (x!=y))</span><br><span class="line">    link_error0();</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __OPTIMIZE__</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">link_error0</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">link_error1</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* ! __OPTIMIZE__ */</span>  </span></span><br></pre></td></tr></table></figure>
+<p>看来是实际优化（无用分支是否被消除掉）和优化选项是否开启（是否有<code>__OPTIMIZE__</code>宏定义）之间的冲突。虽然知道了为什么这个文件报错，但是还是不知道是哪里导致的冲突。</p>
+<p>然后又是走投无路，只能追着<code>-DTEST_SUITE_PROFILE_GENERATE=ON</code>编译选项去啃CMAKE规则文件，最后定位到的地方是<code>test-suite/CMakeLists.txt:137</code></p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(TEST_SUITE_PROFILE_GENERATE)</span><br><span class="line">  <span class="keyword">find_program</span>(TEST_SUITE_LLVM_PROFDATA NAMES <span class="string">&quot;llvm-profdata&quot;</span></span><br><span class="line">               HINTS <span class="variable">$&#123;CMAKE_C_COMPILER_DIRECTORY&#125;</span>)</span><br><span class="line">  <span class="keyword">mark_as_advanced</span>(TEST_SUITE_LLVM_PROFDATA)</span><br><span class="line">  <span class="keyword">if</span>(TEST_SUITE_LLVM_PROFDATA <span class="keyword">STREQUAL</span> <span class="string">&quot;TEST_SUITE_LLVM_PROFDATA-NOTFOUND&quot;</span>)</span><br><span class="line">    <span class="keyword">message</span>(FATAL_ERROR <span class="string">&quot;llvm-profdata not found.</span></span><br><span class="line"><span class="string">Make sure it is in your path or set TEST_SUITE_PROFILE_GENERATE to OFF&quot;</span>)</span><br><span class="line">  <span class="keyword">endif</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">set</span>(TEST_SUITE_PROFILE_GENERATE <span class="string">&quot;True&quot;</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">set</span>(profile_instrumentation_flags -fprofile-instr-generate)</span><br><span class="line">  <span class="keyword">if</span>(TEST_SUITE_USE_IR_PGO)</span><br><span class="line">    <span class="keyword">set</span>(profile_instrumentation_flags -fprofile-generate)</span><br><span class="line">  <span class="keyword">endif</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">list</span>(APPEND CFLAGS   <span class="variable">$&#123;profile_instrumentation_flags&#125;</span>)</span><br><span class="line">  <span class="keyword">list</span>(APPEND CXXFLAGS <span class="variable">$&#123;profile_instrumentation_flags&#125;</span>)</span><br><span class="line">  <span class="keyword">list</span>(APPEND LDFLAGS  <span class="variable">$&#123;profile_instrumentation_flags&#125;</span>)</span><br><span class="line"><span class="keyword">else</span>()</span><br><span class="line">  <span class="keyword">set</span>(TEST_SUITE_PROFILE_GENERATE <span class="string">&quot;False&quot;</span>)</span><br><span class="line"><span class="keyword">endif</span>()</span><br></pre></td></tr></table></figure>
+<p>值得注意的是if分支最后的几行</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(profile_instrumentation_flags -fprofile-instr-generate)</span><br><span class="line"><span class="keyword">if</span>(TEST_SUITE_USE_IR_PGO)</span><br><span class="line">  <span class="keyword">set</span>(profile_instrumentation_flags -fprofile-generate)</span><br><span class="line"><span class="keyword">endif</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">list</span>(APPEND CFLAGS   <span class="variable">$&#123;profile_instrumentation_flags&#125;</span>)</span><br><span class="line"><span class="keyword">list</span>(APPEND CXXFLAGS <span class="variable">$&#123;profile_instrumentation_flags&#125;</span>)</span><br><span class="line"><span class="keyword">list</span>(APPEND LDFLAGS  <span class="variable">$&#123;profile_instrumentation_flags&#125;</span>)</span><br></pre></td></tr></table></figure>
+<p>看来在打开<code>TEST_SUITE_PROFILE_GENERATE</code>选项时，会追加一个FLAG给编译器，接下来我继续谷歌这个FLAG<code>-fprofile-instr-generate</code>，发现时属于clang编译器的，之后我本来想在代码里找到它跟<code>__OPTIMIZE__</code>的联系，无果；又是山穷水尽的时候，这时候突然想到目前已知的几个条件，为何不直接测试clang中能不能触发这个冲突呢。然后就有了最关键的实验</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># in ~ [21:19:43] C:1</span></span><br><span class="line">$ clang -fprofile-instr-generate compare-fp-3.c</span><br><span class="line"></span><br><span class="line"><span class="comment"># in ~ [21:19:51]</span></span><br><span class="line">$ clang -O3 -fprofile-instr-generate compare-fp-3.c</span><br><span class="line">/tmp/compare-fp-3-227c03.o: In <span class="keyword">function</span> `test2<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x4d): undefined reference to `link_error0&#x27;</span></span><br><span class="line">/tmp/compare-fp-3-227c03.o: In <span class="keyword">function</span> `test3<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x8d): undefined reference to `link_error0&#x27;</span></span><br><span class="line">/tmp/compare-fp-3-227c03.o: In <span class="keyword">function</span> `test5<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x113): undefined reference to `link_error1&#x27;</span></span><br><span class="line">/tmp/compare-fp-3-227c03.o: In <span class="keyword">function</span> `test6<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x163): undefined reference to `link_error1&#x27;</span></span><br><span class="line">/tmp/compare-fp-3-227c03.o: In <span class="keyword">function</span> `all_tests<span class="string">&#x27;:</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x1f0): undefined reference to `link_error0&#x27;</span></span><br><span class="line">compare-fp-3.c:(.text+0x223): undefined reference to `link_error0<span class="string">&#x27;</span></span><br><span class="line"><span class="string">compare-fp-3.c:(.text+0x2f6): undefined reference to `link_error1&#x27;</span></span><br><span class="line">compare-fp-3.c:(.text+0x344): undefined reference to `link_error1<span class="string">&#x27;</span></span><br><span class="line"><span class="string">clang-12: error: linker command failed with exit code 1 (use -v to see invocation)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># in ~ [21:20:34] C:1</span></span><br><span class="line"><span class="string">$ clang -O0 -fprofile-instr-generate compare-fp-3.c</span></span><br></pre></td></tr></table></figure>
+<p>复现成功！这时突然注意到，最开始构建test-suite的时候，是开启了O3优化</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">%</span><span class="bash"> mkdir test-suite-build</span></span><br><span class="line"><span class="meta">%</span><span class="bash"> <span class="built_in">cd</span> test-suite-build</span></span><br><span class="line"><span class="meta">%</span><span class="bash"> cmake -DCMAKE_C_COMPILER=&lt;path to llvm build&gt;/bin/clang \</span></span><br><span class="line"><span class="bash">        -C../test-suite/cmake/caches/O3.cmake \</span></span><br><span class="line"><span class="bash">        ../test-suite</span></span><br></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>总结一下，这个error是由于O3优化和<code>TEST_SUITE_PROFILE_GENERATE</code>导致的冲突。仔细想一下，用来生成profile信息的程序当然不能用优化后的程序来profile呀。</p>
+<p>虽然又是一个历经险阻找到原因后直感自己蠢的场景，但是在这种巨型项目面前找到最后的拼图的感觉，还是异常爽快的。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>不知不觉，距离上一次更新博客已经三年半了，这次重启博客的动机主要有两个，一个是来自友人L的威胁</p>
+<blockquote>
+<p>那我就要取关了</p>
+</blockquote>
+<p>怎么能允许这种事情发生呢，老汉请留步，我什么都会做的，拜托了，我什么都会做的！</p>
+<p>第二个是昨天（3.26）字节实习最后的HR面试，HR小姐姐也建议做一些知识输出，看在她那么好看的份上，我就勉（xin）为（xi）其（ruo）难（kuang）地采纳她的建议吧。</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> LLVM </tag>
+            
+            <tag> 编译原理 </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[用正则表达式判断一个二进制数能否被3整除]]></title>
-      <url>http://yoursite.com/2017/09/07/%E7%94%A8%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%95%B0%E8%83%BD%E5%90%A6%E8%A2%AB3%E6%95%B4%E9%99%A4/</url>
+      <url>http://yoursite.com/2017/09/07/%25E7%2594%25A8%25E6%25AD%25A3%25E5%2588%2599%25E8%25A1%25A8%25E8%25BE%25BE%25E5%25BC%258F%25E5%2588%25A4%25E6%2596%25AD%25E4%25B8%2580%25E4%25B8%25AA%25E4%25BA%258C%25E8%25BF%259B%25E5%2588%25B6%25E6%2595%25B0%25E8%2583%25BD%25E5%2590%25A6%25E8%25A2%25AB3%25E6%2595%25B4%25E9%2599%25A4/</url>
       <content type="html"><![CDATA[<p>问题描述如标题，很简洁：用一个正则表达式判断一个二进制数能否被3整除</p>
 <p>比如：<br>000         True<br>11        True<br>1001    True<br>1011     False</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>解决思路也很简单：首先用有限状态机（FSM）实现对能否被3整除的判断，然后将其转换成正则</p>
 <p>有限状态机图如下，分析过程摘自matrix67，并在此感谢一下神犇</p>
 <p><img src="http://www.matrix67.com/blogimage/200812011.gif" alt=""></p>
@@ -17,46 +61,57 @@
 </blockquote>
 <p>最后再加上位置标识符，<code>^1((10*1)|(01*0))*10*$</code></p>
 <p>从matrix67的分析自然语言可以理解正则，但是从有限状态机转换到正则的通式通法还不会。</p>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://blog.2baxb.me/archives/588" target="_blank" rel="external">使用正则表达式判断二进制数字是否能被3整除</a></p>
-<p><a href="http://www.matrix67.com/blog/archives/1089" target="_blank" rel="external">趣题：用正则表达式判断一个二进制数是否能被3整除</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://blog.2baxb.me/archives/588">使用正则表达式判断二进制数字是否能被3整除</a></p>
+<p><a href="http://www.matrix67.com/blog/archives/1089">趣题：用正则表达式判断一个二进制数是否能被3整除</a></p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 算法与数据结构 </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[ubuntu下安装jsoncpp时遇到的坑]]></title>
-      <url>http://yoursite.com/2017/07/21/ubuntu%E4%B8%8B%E5%AE%89%E8%A3%85jsoncpp%E6%97%B6%E9%81%87%E5%88%B0%E7%9A%84%E5%9D%91/</url>
-      <content type="html"><![CDATA[<p>为了在C++程序中解析json文件而选择了jsoncpp，但是安装过程并不是那么顺利，特写此文来记录踩过的坑<br><a id="more"></a><br>首先是执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libjsoncpp-dev</span><br></pre></td></tr></table></figure></p>
-<p>时遇到如下报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Errors were encountered while processing:</span><br><span class="line"> python-gtk2-dev</span><br><span class="line">E: Sub-process /usr/bin/dpkg returned an error code (1)</span><br></pre></td></tr></table></figure></p>
-<p>解决办法：<br>分别执行下面两行命令，注意把<code>PACKAGE</code>替换为<code>python-gtk2-dev</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mv /var/lib/dpkg/info/PACKAGE.* /tmp/</span><br><span class="line">dpkg --remove --force-remove-reinstreq PACKAGE</span><br></pre></td></tr></table></figure></p>
-<p>之后再执行<code>install</code>指令就能安装jsoncpp了</p>
+      <url>http://yoursite.com/2017/07/21/ubuntu%25E4%25B8%258B%25E5%25AE%2589%25E8%25A3%2585jsoncpp%25E6%2597%25B6%25E9%2581%2587%25E5%2588%25B0%25E7%259A%2584%25E5%259D%2591/</url>
+      <content type="html"><![CDATA[<p>为了在C++程序中解析json文件而选择了jsoncpp，但是安装过程并不是那么顺利，特写此文来记录踩过的坑<br><span id="more"></span><br>首先是执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libjsoncpp-dev</span><br></pre></td></tr></table></figure><br>时遇到如下报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Errors were encountered while processing:</span><br><span class="line"> python-gtk2-dev</span><br><span class="line">E: Sub-process &#x2F;usr&#x2F;bin&#x2F;dpkg returned an error code (1)</span><br></pre></td></tr></table></figure></p>
+<p>解决办法：<br>分别执行下面两行命令，注意把<code>PACKAGE</code>替换为<code>python-gtk2-dev</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mv &#x2F;var&#x2F;lib&#x2F;dpkg&#x2F;info&#x2F;PACKAGE.* &#x2F;tmp&#x2F;</span><br><span class="line">dpkg --remove --force-remove-reinstreq PACKAGE</span><br></pre></td></tr></table></figure><br>之后再执行<code>install</code>指令就能安装jsoncpp了</p>
 <hr>
-<p>安装后，使用如下命令编译时报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ server.cpp -o server</span><br></pre></td></tr></table></figure></p>
-<p>报错信息如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server.cpp:14:23: fatal error: json/json.h: No such file or directory</span><br><span class="line">compilation terminated.</span><br></pre></td></tr></table></figure></p>
-<p>解决办法：<br>将代码中的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;json/json.h&gt;</span><br></pre></td></tr></table></figure></p>
-<p>换成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;jsoncpp/json/json.h&gt;</span><br></pre></td></tr></table></figure></p>
-<p>同时将编译命令换成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ server.cpp -o server -ljsoncpp</span><br></pre></td></tr></table></figure></p>
+<p>安装后，使用如下命令编译时报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ server.cpp -o server</span><br></pre></td></tr></table></figure><br>报错信息如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server.cpp:14:23: fatal error: json&#x2F;json.h: No such file or directory</span><br><span class="line">compilation terminated.</span><br></pre></td></tr></table></figure><br>解决办法：<br>将代码中的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;json&#x2F;json.h&gt;</span><br></pre></td></tr></table></figure><br>换成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;jsoncpp&#x2F;json&#x2F;json.h&gt;</span><br></pre></td></tr></table></figure><br>同时将编译命令换成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g++ server.cpp -o server -ljsoncpp</span><br></pre></td></tr></table></figure>
 <hr>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://askubuntu.com/questions/618227/problems-with-python-gtk2-dev-after-update-to-ubuntu-15-04" target="_blank" rel="external">Problems with python-gtk2-dev after update to Ubuntu 15.04</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://askubuntu.com/questions/618227/problems-with-python-gtk2-dev-after-update-to-ubuntu-15-04">Problems with python-gtk2-dev after update to Ubuntu 15.04</a></p>
 <p><a href="Fatal error with jsoncpp while compiling">Fatal error with jsoncpp while compiling</a></p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> C++ </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[树莓派变身路由器]]></title>
-      <url>http://yoursite.com/2017/07/19/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%8F%98%E8%BA%AB%E8%B7%AF%E7%94%B1%E5%99%A8/</url>
+      <url>http://yoursite.com/2017/07/19/%25E6%25A0%2591%25E8%258E%2593%25E6%25B4%25BE%25E5%258F%2598%25E8%25BA%25AB%25E8%25B7%25AF%25E7%2594%25B1%25E5%2599%25A8/</url>
       <content type="html"><![CDATA[<p>最近在北海道大学参加HSI项目，由于宿舍没有无线网络，只有网线，而我又不想让笔记本24小时全天候开着当路由器，是时候折腾树莓派了！</p>
-<p>因为最新的树莓派3板载了无线网络适配器，所以可以像手机一样开启热点，变身成一个路由器。<br><a id="more"></a></p>
+<p>因为最新的树莓派3板载了无线网络适配器，所以可以像手机一样开启热点，变身成一个路由器。<br><span id="more"></span></p>
 <hr>
 <h1 id="安装软件包"><a href="#安装软件包" class="headerlink" title="安装软件包"></a>安装软件包</h1><p>需要安装2个软件包</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install hostapd dnsmasq</span><br></pre></td></tr></table></figure>
 <p>hostapd 是 Host Access Point 守护进程，提供对基于 Linux 的无线接入点的强 WPA2 加密和身份验证。配置 hostapd 非常简单，它支持 WPA2-Personal 和 Enterprise，提供了对 WPA2-Personal 的独特修改，可让管理它变得更复杂或更简单。</p>
 <p>dnsmasq是一个小巧且方便地用于配置DNS和DHCP的工具，适用于小型网络，它提供了DNS功能和可选择的DHCP功能。主用适用于NAT的家庭网络，用modem，cable modem，ADSL设备连接到因特网。</p>
 <hr>
-<h1 id="设置静态IP"><a href="#设置静态IP" class="headerlink" title="设置静态IP"></a>设置静态IP</h1><p>需要将无线接口wlan0的IP配置成静态地址<br>首先让dhcpcd不再管理wlan0，避免设置冲突<br>修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/dhcpcd.conf</span><br></pre></td></tr></table></figure></p>
+<h1 id="设置静态IP"><a href="#设置静态IP" class="headerlink" title="设置静态IP"></a>设置静态IP</h1><p>需要将无线接口wlan0的IP配置成静态地址<br>首先让dhcpcd不再管理wlan0，避免设置冲突<br>修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;dhcpcd.conf</span><br></pre></td></tr></table></figure></p>
 <p>在文件开头增加一行：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">denyinterfaces wlan0</span><br></pre></td></tr></table></figure>
-<p>接下来设置wlan0的静态IP，修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/network/interfaces</span><br></pre></td></tr></table></figure></p>
-<p>把wlan0相关的内容改成为如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug wlan0</span><br><span class="line">#iface wlan0 inet manual</span><br><span class="line">#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</span><br><span class="line">iface wlan0 inet static</span><br><span class="line">	address 192.168.8.1</span><br><span class="line">	netmask 255.255.255.0</span><br><span class="line">	network 192.168.8.0</span><br><span class="line">	broadcast 192.168.8.255</span><br></pre></td></tr></table></figure></p>
+<p>接下来设置wlan0的静态IP，修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;network&#x2F;interfaces</span><br></pre></td></tr></table></figure></p>
+<p>把wlan0相关的内容改成为如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">allow-hotplug wlan0</span><br><span class="line">#iface wlan0 inet manual</span><br><span class="line">#    wpa-conf &#x2F;etc&#x2F;wpa_supplicant&#x2F;wpa_supplicant.conf</span><br><span class="line">iface wlan0 inet static</span><br><span class="line">	address 192.168.8.1</span><br><span class="line">	netmask 255.255.255.0</span><br><span class="line">	network 192.168.8.0</span><br><span class="line">	broadcast 192.168.8.255</span><br></pre></td></tr></table></figure></p>
 <p>192.168.8.1是给树莓派做路由器分配的网关IP，不能与局域网其他路由器网关IP重复，若重复此处可改成其他网关。</p>
 <p>重启服务和wlan0</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo service dhcpcd restart</span><br><span class="line">sudo ifdown wlan0</span><br><span class="line">sudo ifup wlan0</span><br></pre></td></tr></table></figure>
@@ -64,39 +119,46 @@
 <p>PS：当时本想着让树莓派接入笔记本的热点，然后在笔记本上登录树莓派并配置，但是固定完IP之后就无法连入笔记本的热点了，最后是用手机USB数据线连接树莓派，手机登录树莓派，然后再用笔记本来远程控制手机，把手机屏幕和输入交给笔记本来搞的，别提多蛋疼了。。</p>
 <hr>
 <h1 id="配置hostapd"><a href="#配置hostapd" class="headerlink" title="配置hostapd"></a>配置hostapd</h1><p>新建配置文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/hostapd/hostapd.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;hostapd&#x2F;hostapd.conf</span><br></pre></td></tr></table></figure>
 <p>添加如下代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"># This is the name of the WiFi interface we configured above</span><br><span class="line">interface=wlan0</span><br><span class="line"></span><br><span class="line"># Use the nl80211 driver with the brcmfmac driver</span><br><span class="line">driver=nl80211</span><br><span class="line"></span><br><span class="line"># This is the name of the network</span><br><span class="line">ssid=RaspberryPi</span><br><span class="line"></span><br><span class="line"># Use the 2.4GHz band</span><br><span class="line">hw_mode=g</span><br><span class="line"></span><br><span class="line"># Use channel 6</span><br><span class="line">channel=6</span><br><span class="line"></span><br><span class="line"># Enable 802.11n</span><br><span class="line">ieee80211n=1</span><br><span class="line"></span><br><span class="line"># Enable WMM</span><br><span class="line">wmm_enabled=1</span><br><span class="line"></span><br><span class="line"># Enable 40MHz channels with 20ns guard interval</span><br><span class="line">ht_capab=[HT40][SHORT-GI-20][DSSS_CCK-40]</span><br><span class="line"></span><br><span class="line"># Accept all MAC addresses</span><br><span class="line">macaddr_acl=0</span><br><span class="line"></span><br><span class="line"># Use WPA authentication</span><br><span class="line">auth_algs=1</span><br><span class="line"></span><br><span class="line"># Require clients to know the network name</span><br><span class="line">ignore_broadcast_ssid=0</span><br><span class="line"></span><br><span class="line"># Use WPA2</span><br><span class="line">wpa=2</span><br><span class="line"></span><br><span class="line"># Use a pre-shared key</span><br><span class="line">wpa_key_mgmt=WPA-PSK</span><br><span class="line"></span><br><span class="line"># The network passphrase</span><br><span class="line">wpa_passphrase=raspberry</span><br><span class="line"></span><br><span class="line"># Use AES, instead of TKIP</span><br><span class="line">rsn_pairwise=CCMP</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"># This is the name of the WiFi interface we configured above</span><br><span class="line">interface&#x3D;wlan0</span><br><span class="line"></span><br><span class="line"># Use the nl80211 driver with the brcmfmac driver</span><br><span class="line">driver&#x3D;nl80211</span><br><span class="line"></span><br><span class="line"># This is the name of the network</span><br><span class="line">ssid&#x3D;RaspberryPi</span><br><span class="line"></span><br><span class="line"># Use the 2.4GHz band</span><br><span class="line">hw_mode&#x3D;g</span><br><span class="line"></span><br><span class="line"># Use channel 6</span><br><span class="line">channel&#x3D;6</span><br><span class="line"></span><br><span class="line"># Enable 802.11n</span><br><span class="line">ieee80211n&#x3D;1</span><br><span class="line"></span><br><span class="line"># Enable WMM</span><br><span class="line">wmm_enabled&#x3D;1</span><br><span class="line"></span><br><span class="line"># Enable 40MHz channels with 20ns guard interval</span><br><span class="line">ht_capab&#x3D;[HT40][SHORT-GI-20][DSSS_CCK-40]</span><br><span class="line"></span><br><span class="line"># Accept all MAC addresses</span><br><span class="line">macaddr_acl&#x3D;0</span><br><span class="line"></span><br><span class="line"># Use WPA authentication</span><br><span class="line">auth_algs&#x3D;1</span><br><span class="line"></span><br><span class="line"># Require clients to know the network name</span><br><span class="line">ignore_broadcast_ssid&#x3D;0</span><br><span class="line"></span><br><span class="line"># Use WPA2</span><br><span class="line">wpa&#x3D;2</span><br><span class="line"></span><br><span class="line"># Use a pre-shared key</span><br><span class="line">wpa_key_mgmt&#x3D;WPA-PSK</span><br><span class="line"></span><br><span class="line"># The network passphrase</span><br><span class="line">wpa_passphrase&#x3D;raspberry</span><br><span class="line"></span><br><span class="line"># Use AES, instead of TKIP</span><br><span class="line">rsn_pairwise&#x3D;CCMP</span><br></pre></td></tr></table></figure>
 <p>上述代码中，<code>ssid</code>和<code>wpa_passphrase</code>分别是无线网络的名字和密码（密码需8位以上）</p>
 <p>然后测试配置是否正确，命令如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /usr/sbin/hostapd /etc/hostapd/hostapd.conf</span><br></pre></td></tr></table></figure>
-<p>此时通过手机等设备已经可以搜到名字为RaspberryPi的WiFi，无需连接<br>如果没有问题，按Ctrl+C停止测试<br>使上述设置生效：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/default/hostapd</span><br></pre></td></tr></table></figure></p>
-<p>将<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#DAEMON_CONF=&quot;&quot;</span><br></pre></td></tr></table></figure></p>
-<p>修改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DAEMON_CONF=&quot;/etc/hostapd/hostapd.conf&quot;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo &#x2F;usr&#x2F;sbin&#x2F;hostapd &#x2F;etc&#x2F;hostapd&#x2F;hostapd.conf</span><br></pre></td></tr></table></figure>
+<p>此时通过手机等设备已经可以搜到名字为RaspberryPi的WiFi，无需连接<br>如果没有问题，按Ctrl+C停止测试<br>使上述设置生效：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;default&#x2F;hostapd</span><br></pre></td></tr></table></figure></p>
+<p>将<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#DAEMON_CONF&#x3D;&quot;&quot;</span><br></pre></td></tr></table></figure><br>修改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DAEMON_CONF&#x3D;&quot;&#x2F;etc&#x2F;hostapd&#x2F;hostapd.conf&quot;</span><br></pre></td></tr></table></figure></p>
 <hr>
 <h1 id="安装DHCP服务"><a href="#安装DHCP服务" class="headerlink" title="安装DHCP服务"></a>安装DHCP服务</h1><p>安装命令如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install isc-dhcp-server</span><br></pre></td></tr></table></figure></p>
-<p>备份配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.config.bak</span><br></pre></td></tr></table></figure></p>
-<p>编辑新的配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/dhcp/dhcpd.conf</span><br></pre></td></tr></table></figure></p>
+<p>备份配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mv &#x2F;etc&#x2F;dhcp&#x2F;dhcpd.conf &#x2F;etc&#x2F;dhcp&#x2F;dhcpd.config.bak</span><br></pre></td></tr></table></figure></p>
+<p>编辑新的配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;dhcp&#x2F;dhcpd.conf</span><br></pre></td></tr></table></figure></p>
 <p>修改成如下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">default-lease-time 600;</span><br><span class="line">max-lease-time 7200;</span><br><span class="line">log-facility local7;</span><br><span class="line"> </span><br><span class="line">subnet 192.168.8.0 netmask 255.255.255.0 &#123;</span><br><span class="line">  range 192.168.8.10 192.168.8.100;</span><br><span class="line">  option routers 192.168.8.1;</span><br><span class="line">  option broadcast-address 192.168.8.255;</span><br><span class="line">  option domain-name-servers 8.8.8.8,8.8.4.4;</span><br><span class="line">  default-lease-time 600;</span><br><span class="line">  max-lease-time 7200;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>此处设置的IP与上面的IP网关对应</p>
 <p>重启服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service  isc-dhcp-server restart</span><br></pre></td></tr></table></figure></p>
 <hr>
-<h1 id="开启IPV4转发"><a href="#开启IPV4转发" class="headerlink" title="开启IPV4转发"></a>开启IPV4转发</h1><p>修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/sysctl.conf</span><br></pre></td></tr></table></figure></p>
+<h1 id="开启IPV4转发"><a href="#开启IPV4转发" class="headerlink" title="开启IPV4转发"></a>开启IPV4转发</h1><p>修改文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;sysctl.conf</span><br></pre></td></tr></table></figure></p>
 <p>去掉<code>net.ipv4.ip_forward=1</code>前面的“#”号</p>
 <p>通过<code>iptables</code>做NAT转发：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</span><br><span class="line">sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT</span><br></pre></td></tr></table></figure></p>
-<p>这些配置重启后就失效了，需要保存下来：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sh -c &quot;iptables-save &gt; /etc/iptables.ipv4.nat&quot;</span><br></pre></td></tr></table></figure></p>
-<p>设为开机自动加载：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/rc.local</span><br></pre></td></tr></table></figure></p>
-<p>在<code>exit 0</code>上方添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables-restore &lt; /etc/iptables.ipv4.nat</span><br></pre></td></tr></table></figure></p>
+<p>这些配置重启后就失效了，需要保存下来：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sh -c &quot;iptables-save &gt; &#x2F;etc&#x2F;iptables.ipv4.nat&quot;</span><br></pre></td></tr></table></figure></p>
+<p>设为开机自动加载：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi &#x2F;etc&#x2F;rc.local</span><br></pre></td></tr></table></figure></p>
+<p>在<code>exit 0</code>上方添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables-restore &lt; &#x2F;etc&#x2F;iptables.ipv4.nat</span><br></pre></td></tr></table></figure></p>
 <p>启动服务并重启：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo service hostapd start</span><br><span class="line">sudo reboot</span><br></pre></td></tr></table></figure></p>
 <p>等树莓派重启完成，就可以用手机等设备连接该WiFi上网了，名字和密码是之前在<code>/etc/hostapd/hostapd.conf</code>文件中设定的。<br>连接后设备会获取到192.168.8.10—-192.168.8.100之间的IP，并且可以通过树莓派连接的有线网络连上互联网，起到了无线路由器的功能。</p>
 <p>如果遇到问题，可以通过以下命令检查服务情况。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service hostapd status</span><br></pre></td></tr></table></figure></p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 树莓派 Raspberry Pi </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[android手机通过数据线连接树莓派]]></title>
-      <url>http://yoursite.com/2017/07/09/%E6%89%8B%E6%9C%BA%E9%80%9A%E8%BF%87%E6%95%B0%E6%8D%AE%E7%BA%BF%E8%BF%9E%E6%8E%A5%E6%A0%91%E8%8E%93%E6%B4%BE/</url>
-      <content type="html"><![CDATA[<p>在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。<br><a id="more"></a></p>
+      <url>http://yoursite.com/2017/07/09/%25E6%2589%258B%25E6%259C%25BA%25E9%2580%259A%25E8%25BF%2587%25E6%2595%25B0%25E6%258D%25AE%25E7%25BA%25BF%25E8%25BF%259E%25E6%258E%25A5%25E6%25A0%2591%25E8%258E%2593%25E6%25B4%25BE/</url>
+      <content type="html"><![CDATA[<p>在折腾树莓派的时候，我也发现不少在网上找到资料了，但是并不适用于自己的情况，所以还是有必要记录这些点滴的。<br><span id="more"></span></p>
 <hr>
 <h1 id="设备清单"><a href="#设备清单" class="headerlink" title="设备清单"></a>设备清单</h1><p>android手机（小米6-系统7.1），树莓派3B，数据线</p>
 <hr>
@@ -125,43 +187,67 @@
 <p>因为树莓派官方系统和安卓系统都是基于Linux内核，在Linux中，USB接口可以虚拟为有线网口，也就是说，用数据线连接树莓派和安卓手机，就相当于将两台电脑主机用网线连接一样，而通过”USB网络共享”这个功能，可以将手机虚拟为一个”路由器”，而让树莓派变成了一个”网络终端”，从而组建起一个微型的”局域网”。</p>
 </blockquote>
 <hr>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://mlapp.cn/179.html" target="_blank" rel="external">树莓派折腾记:纯手机+数据线连接树莓派</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://mlapp.cn/179.html">树莓派折腾记:纯手机+数据线连接树莓派</a></p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 树莓派 Raspberry Pi </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[树莓派raspberry关机和重启命令]]></title>
-      <url>http://yoursite.com/2017/07/09/%E6%A0%91%E8%8E%93%E6%B4%BEraspberry%E5%85%B3%E6%9C%BA%E5%92%8C%E9%87%8D%E5%90%AF%E5%91%BD%E4%BB%A4/</url>
+      <url>http://yoursite.com/2017/07/09/%25E6%25A0%2591%25E8%258E%2593%25E6%25B4%25BEraspberry%25E5%2585%25B3%25E6%259C%25BA%25E5%2592%258C%25E9%2587%258D%25E5%2590%25AF%25E5%2591%25BD%25E4%25BB%25A4/</url>
       <content type="html"><![CDATA[<p>树莓派没有像PC一样的电源开关，如果直接拔掉电源线，有可能会丢失数据甚至损坏SD卡，所以最稳妥的方法是用命令来关闭或者重启树莓派</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>关闭树莓派命令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo shutdown -h now</span><br><span class="line">sudo halt</span><br><span class="line">sudo poweroff</span><br><span class="line">sudo init 0</span><br></pre></td></tr></table></figure>
 <p>任意一个命令都可以，第一行中的’-h’表示将系统挂起，’now’立即执行</p>
 <p>重启树莓派命令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo shutdown -r now</span><br><span class="line">sudo reboot</span><br><span class="line">sudo shutdown -r 04:00:00 #定时重启，时间为凌晨四点</span><br></pre></td></tr></table></figure>]]></content>
+      
+        
+        <tags>
+            
+            <tag> 树莓派 Raspberry Pi </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[记计算机博弈校内赛]]></title>
-      <url>http://yoursite.com/2017/05/25/%E8%AE%B0%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%8D%9A%E5%BC%88%E6%A0%A1%E5%86%85%E8%B5%9B/</url>
+      <url>http://yoursite.com/2017/05/25/%25E8%25AE%25B0%25E8%25AE%25A1%25E7%25AE%2597%25E6%259C%25BA%25E5%258D%259A%25E5%25BC%2588%25E6%25A0%25A1%25E5%2586%2585%25E8%25B5%259B/</url>
       <content type="html"><![CDATA[<p>现在是大三下学期14周的周四，转眼这学期已进入了尾声，这学期做的主要的事情除了魔方机器人就是计算机博弈校内赛了，在14周周一当场答辩之后，校内赛终于可以说是告一段落了，而且最后也是happy ending，在这里记录一下这段宝贵的经历。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>简单概括一下这事件，校内赛决赛一共八支队伍，我们队伍质疑了其中五支队伍，其中三支队伍当场退赛，剩下两只队伍在赛后1支成绩降等（主观上退赛），另一支队伍成绩降等，但是取消国赛资格，我们队伍和另一支队伍参加国赛。</p>
 <hr>
 <p>To be continued</p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 碎碎念 </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[解魔方机器人调试遇到的问题]]></title>
-      <url>http://yoursite.com/2017/03/31/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E8%B0%83%E8%AF%95%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</url>
+      <url>http://yoursite.com/2017/03/31/%25E8%25A7%25A3%25E9%25AD%2594%25E6%2596%25B9%25E6%259C%25BA%25E5%2599%25A8%25E4%25BA%25BA%25E8%25B0%2583%25E8%25AF%2595%25E9%2581%2587%25E5%2588%25B0%25E7%259A%2584%25E9%2597%25AE%25E9%25A2%2598/</url>
       <content type="html"><![CDATA[<p>最近已经把解魔方机器人的机械搭完了，开始进入调程序部分，这里记录一下调程序过程遇到的问题</p>
 <hr>
 <ul>
 <li>步进电机无反应</li>
 </ul>
 <p>先将步进电机插到别的驱动板上，再更换驱动板，最后发现是驱动板的STEP和DIR两根线插反了</p>
-<a id="more"></a>
+<span id="more"></span>
 <hr>
 <ul>
 <li>步进电机偶尔会以非常慢的速度转动</li>
@@ -170,35 +256,45 @@
 <hr>
 <ul>
 <li>将步进电机转动的方法变速<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stepper[id]-&gt;runToPosition();</span><br></pre></td></tr></table></figure>
-</li>
+改成匀速<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">while (stepper[id]-&gt;distanceToGo() !&#x3D; 0) &#123;</span><br><span class="line">      stepper[id]-&gt;runSpeed();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+电机以非常慢的速度转动</li>
 </ul>
-<p>改成匀速<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">while (stepper[id]-&gt;distanceToGo() != 0) &#123;</span><br><span class="line">      stepper[id]-&gt;runSpeed();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>电机以非常慢的速度转动</p>
-<p>去google了一下，发现有人遇到类似的情况，参考<a href="https://forum.arduino.cc/index.php?topic=305882.0" target="_blank" rel="external">这里</a>的#4</p>
+<p>去google了一下，发现有人遇到类似的情况，参考<a href="https://forum.arduino.cc/index.php?topic=305882.0">这里</a>的#4</p>
 <blockquote>
 <p>I solved the problem by</p>
+</blockquote>
+<blockquote>
 <ul>
 <li>calling setSpeed() and setMaxSpeed() in the Loop and thus constantly instead of only when a movement is ordered.</li>
 <li>using runSpeedToPosition() instead of runSpeed() (good guess, Robin2)</li>
 <li>calling stop() before ordering a new movement.</li>
 </ul>
 </blockquote>
-<p>将代码改成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while (stepper[id]-&gt;distanceToGo() != 0) &#123;</span><br><span class="line">      stepper[id]-&gt;setSpeed(SPEED);</span><br><span class="line">      stepper[id]-&gt;runSpeedToPosition();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>问题解决，之后测试问题2，发现问题2也消失了</p>
+<p>将代码改成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while (stepper[id]-&gt;distanceToGo() !&#x3D; 0) &#123;</span><br><span class="line">      stepper[id]-&gt;setSpeed(SPEED);</span><br><span class="line">      stepper[id]-&gt;runSpeedToPosition();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>问题解决，之后测试问题2，发现问题2也消失了</p>
 <hr>
 <ul>
 <li>在整体旋转魔方时候，魔方经常掉</li>
 </ul>
 <p>这是由于机械臂夹的不够紧造成的，解决办法很简单，在每次旋转魔方前，让机械臂再“靠近”魔方一些</p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 解魔方机器人 </tag>
+            
+            <tag> Arduino </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[树莓派raspberry安装系统]]></title>
-      <url>http://yoursite.com/2017/03/25/%E6%A0%91%E8%8E%93%E6%B4%BEraspberry%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F/</url>
+      <url>http://yoursite.com/2017/03/25/%25E6%25A0%2591%25E8%258E%2593%25E6%25B4%25BEraspberry%25E5%25AE%2589%25E8%25A3%2585%25E7%25B3%25BB%25E7%25BB%259F/</url>
       <content type="html"><![CDATA[<p>本文记载了在Ubuntu下面给树莓派安装NOOBS系统的过程。</p>
 <p>总述一下准备过程，去官网下载NOOBS，解压后将文件放到格式化后的SD卡中即可，剩下的就把卡插到树莓派中，通电，树莓派会自动进入安装界面。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>接下来说明一下在Ubuntu下面通过CLI格式SD卡的步骤。</p>
 <p>这里使用<code>mkdosfs</code>（make-dos-files-system）命令来格式SD卡，文件格式为FAT32。格式SD卡前先需要查出SD卡的设备名称。</p>
 <blockquote>
@@ -210,14 +306,22 @@
 <p><code>sudo mkdosfs -F 32 -v /dev/sdb1</code></p>
 <p>至此，SD卡格式化完成</p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 树莓派 Raspberry Pi </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[解魔方机器人第一阶段]]></title>
-      <url>http://yoursite.com/2017/02/02/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5/</url>
+      <url>http://yoursite.com/2017/02/02/%25E8%25A7%25A3%25E9%25AD%2594%25E6%2596%25B9%25E6%259C%25BA%25E5%2599%25A8%25E4%25BA%25BA%25E7%25AC%25AC%25E4%25B8%2580%25E9%2598%25B6%25E6%25AE%25B5/</url>
       <content type="html"><![CDATA[<p>今天终于把第一阶段的解魔方app完成了（只是功能上完成，UI和交互完全没法看），在这里把遇到的问题和注意的事情给记录一下，写给未来可能会懵逼的自己。</p>
 <p>之前没有系统地学过android编程，这次写app真可谓是举步维艰，还好github有相关的代码可以参考。</p>
-<a id="more"></a>
+<span id="more"></span>
 <hr>
 <h1 id="整体设计"><a href="#整体设计" class="headerlink" title="整体设计"></a>整体设计</h1><p>首先是从固定的九个点获取颜色（以HSV模型保存），确切地说是从固定的九个矩形中取平均颜色，但是矩形面积都不大。</p>
 <blockquote>
@@ -232,7 +336,7 @@
 <blockquote>
 <p>注意：在我测试的环境中，红色H值的区间大部分为350以上，少部分有10以下的，如果350以上的值不足9个的话，要从最小的值中补齐。<br>我的方法是将H值最小的9个元素复制到H值最大的元素后面，每次找到颜色开始的索引，向后取9个就是相同的9个颜色小块。</p>
 </blockquote>
-<p>最后利用上一步得到的魔方状态字符串绘制魔方（只会绘制展开图），并将字符串传给计算还原步骤的程序，这里我直接用的github上现成的程序，来源<a href="https://github.com/cs0x7f/min2phase" target="_blank" rel="external">cs0x7f/min2phase</a>。</p>
+<p>最后利用上一步得到的魔方状态字符串绘制魔方（只会绘制展开图），并将字符串传给计算还原步骤的程序，这里我直接用的github上现成的程序，来源<a href="https://github.com/cs0x7f/min2phase">cs0x7f/min2phase</a>。</p>
 <p>这个程序不光能以较少步数解出魔方，还能对不合法的状态进行判断，在这里对作者深表感谢。</p>
 <hr>
 <h1 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h1><ul>
@@ -255,13 +359,23 @@
 <hr>
 <p>未完待续……</p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 解魔方机器人 </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[解魔方机器人总体设计]]></title>
-      <url>http://yoursite.com/2017/02/02/%E8%A7%A3%E9%AD%94%E6%96%B9%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1/</url>
+      <url>http://yoursite.com/2017/02/02/%25E8%25A7%25A3%25E9%25AD%2594%25E6%2596%25B9%25E6%259C%25BA%25E5%2599%25A8%25E4%25BA%25BA%25E6%2580%25BB%25E4%25BD%2593%25E8%25AE%25BE%25E8%25AE%25A1/</url>
       <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>不知道什么时候看到的一个基于三星手机和乐高积木的解魔方机器人获得世界记录的视频，自从那之后，自己做一个解魔方机器人的想法一直徘徊在脑海中挥之不去，直到现在，终于有机会来亲手把想法“变现”了，说实话，一直很少有这种把想法实现的经历，可能是自己比较看重这一点吧，所以这个魔方机器人对我来说另一层意义便是锻炼自己把想法实现的能力。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h1 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h1><p>整体上分为三部分，android手机作为上位机，arduino作为下位机，还有机械部分。</p>
+<span id="more"></span>
+<hr>
+<h1 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h1><p>整体上分为三部分，android手机作为上位机，arduino作为下位机，还有机械部分。</p>
 <h2 id="android上位机"><a href="#android上位机" class="headerlink" title="android上位机"></a>android上位机</h2><p>android上位机负责利用手机获取魔方状态，并计算出还原序列，将还原序列发送给下位机。</p>
 <blockquote>
 <p>本来想只是用arduino作为主控的，但是发现arduino计算性能太差，从经济的角度出发，便选择了arduino+android的方案</p>
@@ -286,13 +400,23 @@
 </ul>
 <h2 id="第三阶段"><a href="#第三阶段" class="headerlink" title="第三阶段"></a>第三阶段</h2><p>搭建机械部分</p>
 ]]></content>
+      
+        
+        <tags>
+            
+            <tag> 解魔方机器人 </tag>
+            
+        </tags>
+        
     </entry>
     
     <entry>
       <title><![CDATA[新的开始]]></title>
-      <url>http://yoursite.com/2017/02/01/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B/</url>
+      <url>http://yoursite.com/2017/02/01/%25E6%2596%25B0%25E7%259A%2584%25E5%25BC%2580%25E5%25A7%258B/</url>
       <content type="html"><![CDATA[<p>2017，重新起航</p>
 ]]></content>
+      
+        
     </entry>
     
   
